@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <ProjectReference Include="..\..\src\Microondas.Application.Commands\Microondas.Application.Commands.csproj" />
+    <ProjectReference Include="..\..\src\Microondas.Application.ReadModels\Microondas.Application.ReadModels.csproj" />
+    <ProjectReference Include="..\..\src\Microondas.Domain\Microondas.Domain.csproj" />
+  </ItemGroup>
+</Project>

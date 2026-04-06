@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+    <ProjectReference Include="..\Microondas.Application.Commands\Microondas.Application.Commands.csproj" />
+    <ProjectReference Include="..\Microondas.Application.EventHandlers\Microondas.Application.EventHandlers.csproj" />
+    <ProjectReference Include="..\Microondas.Application.ReadModels\Microondas.Application.ReadModels.csproj" />
+    <ProjectReference Include="..\Microondas.Infrastructure\Microondas.Infrastructure.csproj" />
+    <ProjectReference Include="..\Microondas.Workers\Microondas.Workers.csproj" />
+  </ItemGroup>
+</Project>

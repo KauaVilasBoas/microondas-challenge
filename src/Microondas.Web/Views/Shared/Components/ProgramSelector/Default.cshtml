@@ -1,0 +1,14 @@
+@model IReadOnlyList<ProgramReadModel>
+
+<div class="program-selector-component">
+    <h3>Programas Disponíveis</h3>
+    <ul>
+        @foreach (var program in Model)
+        {
+            <li class="@(program.IsCustom ? "custom-program" : "predefined-program")">
+                <strong>@program.Name</strong> - @program.Food
+                (@(program.TimeInSeconds / 60)min, Pot: @program.Power, Char: '@program.HeatingChar')
+            </li>
+        }
+    </ul>
+</div>

@@ -1,0 +1,84 @@
+@model HeatingViewModel
+@{
+    ViewData["Title"] = "Micro-ondas Digital";
+    var status = ViewData["HeatingStatus"] as HeatingStatusViewModel;
+    var programs = ViewData["Programs"] as IReadOnlyList<ProgramReadModel> ?? [];
+}
+
+<div class="microwave-container">
+    <h1>Micro-ondas Digital</h1>
+
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="alert alert-error">@Model.ErrorMessage</div>
+    }
+
+    <div class="display-panel" id="displayPanel">
+        <div id="status-label">@(status?.Status ?? "Idle")</div>
+        <div id="time-display">@(status?.DisplayTime ?? "0")</div>
+        <div id="power-display">Potência: @(status?.PowerLevel?.ToString() ?? "-")</div>
+        <div class="output-display" id="output-display">@(status?.CurrentOutput ?? "")</div>
+    </div>
+
+    <div class="controls-section">
+        <form asp-action="Start" asp-controller="Heating" method="post">
+            @Html.AntiForgeryToken()
+            <div class="input-group">
+                <label for="TimeInSeconds">Tempo (segundos):</label>
+                <input type="number" id="TimeInSeconds" name="TimeInSeconds"
+                       min="1" max="120" placeholder="1-120"
+                       value="@Model.TimeInSeconds"
+                       data-keyboard-target="TimeInSeconds" />
+                <vc:digital-keyboard target-field-id="TimeInSeconds" />
+            </div>
+
+            <div class="input-group">
+                <label for="PowerLevel">Potência (1-10):</label>
+                <input type="number" id="PowerLevel" name="PowerLevel"
+                       min="1" max="10" placeholder="1-10 (padrão: 10)"
+                       value="@Model.PowerLevel"
+                       data-keyboard-target="PowerLevel" />
+                <vc:digital-keyboard target-field-id="PowerLevel" />
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary btn-start">
+                    @(status?.IsRunning == true ? "▶ +30s" : status?.IsPaused == true ? "▶ Retomar" : "▶ Iniciar")
+                </button>
+            </div>
+        </form>
+
+        <form asp-action="PauseOrCancel" asp-controller="Heating" method="post" style="display:inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-secondary">
+                @(status?.IsRunning == true ? "⏸ Pausar" : status?.IsPaused == true ? "✕ Cancelar" : "✕ Limpar")
+            </button>
+        </form>
+    </div>
+
+    @if (programs.Count > 0)
+    {
+        <div class="programs-section">
+            <h2>Programas de Aquecimento</h2>
+            <form asp-action="StartProgram" asp-controller="Heating" method="post">
+                @Html.AntiForgeryToken()
+                <div class="program-list">
+                    @foreach (var program in programs)
+                    {
+                        <label class="program-item @(program.IsCustom ? "program-custom" : "")">
+                            <input type="radio" name="SelectedProgramId" value="@program.Id" />
+                            <span class="program-name">@program.Name</span>
+                            <span class="program-food">(@program.Food)</span>
+                            <span class="program-details">@(program.TimeInSeconds / 60)min @(program.TimeInSeconds % 60)s | Pot: @program.Power</span>
+                            @if (program.Instructions != null)
+                            {
+                                <small class="program-instructions">@program.Instructions</small>
+                            }
+                        </label>
+                    }
+                </div>
+                <button type="submit" class="btn btn-program">▶ Iniciar Programa</button>
+            </form>
+        </div>
+    }
+</div>

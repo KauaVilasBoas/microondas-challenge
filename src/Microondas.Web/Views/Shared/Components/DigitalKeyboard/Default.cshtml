@@ -1,0 +1,13 @@
+@model string
+@{
+    var targetField = Model;
+}
+
+<div class="digital-keyboard" data-target="@targetField">
+    @foreach (var digit in new[] { "7", "8", "9", "4", "5", "6", "1", "2", "3", "0" })
+    {
+        <button type="button" class="key-btn" data-digit="@digit" data-target="@targetField">@digit</button>
+    }
+    <button type="button" class="key-btn key-clear" data-action="clear" data-target="@targetField">C</button>
+    <button type="button" class="key-btn key-backspace" data-action="backspace" data-target="@targetField">⌫</button>
+</div>

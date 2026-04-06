@@ -1,0 +1,26 @@
+## .NET Core
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+bin/
+obj/
+*.DotSettings
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+**/Properties/launchSettings.json
+
+## Logs
+*.log
+logs/
+
+## Secrets
+appsettings.Development.json
+secrets.json
+
+## OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,53 @@
+@model ProgramListViewModel
+@{
+    ViewData["Title"] = "Programas de Aquecimento";
+}
+
+<h1>Programas de Aquecimento</h1>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-error">@TempData["ErrorMessage"]</div>
+}
+
+<a href="/Programs/Create" class="btn btn-primary">+ Novo Programa</a>
+
+<table class="programs-table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Alimento</th>
+            <th>Tempo</th>
+            <th>Potência</th>
+            <th>Char</th>
+            <th>Tipo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var program in Model.Programs)
+        {
+            <tr class="@(program.IsCustom ? "custom-row" : "")">
+                <td class="@(program.IsCustom ? "custom-name" : "")">@program.Name</td>
+                <td>@program.Food</td>
+                <td>@(program.TimeInSeconds / 60)min @(program.TimeInSeconds % 60)s</td>
+                <td>@program.Power</td>
+                <td>@program.HeatingChar</td>
+                <td>@(program.IsCustom ? "Customizado" : "Pré-definido")</td>
+                <td>
+                    @if (program.IsCustom)
+                    {
+                        <form asp-action="Delete" asp-controller="Programs" method="post" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@program.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Confirma exclusão?')">
+                                Excluir
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

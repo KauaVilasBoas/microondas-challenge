@@ -1,0 +1,16 @@
+@model HeatingStatusViewModel
+
+<div class="heating-display-component" id="heatingDisplay">
+    <div class="status-indicator status-@Model.Status.ToLower()">
+        @Model.Status
+    </div>
+    @if (Model.RemainingSeconds.HasValue)
+    {
+        <div class="time-remaining">Restante: @(Model.DisplayTime ?? Model.RemainingSeconds.ToString())</div>
+        <div class="power-level">Potência: @Model.PowerLevel</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.CurrentOutput))
+    {
+        <div class="output-text">@Model.CurrentOutput</div>
+    }
+</div>

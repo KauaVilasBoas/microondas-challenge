@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Micro-ondas Digital</title>
+    <link rel="stylesheet" href="~/css/microwave.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/Heating">Micro-ondas</a>
+            <a href="/Programs">Programas</a>
+        </nav>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script src="~/js/heating-signalr.js" asp-append-version="true"></script>
+    <script src="~/js/digital-keyboard.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
