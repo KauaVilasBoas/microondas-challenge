@@ -5,6 +5,14 @@ const connection = new signalR.HubConnectionBuilder()
     .withAutomaticReconnect()
     .build();
 
+const STATUS_LABELS = {
+    "Running":   "▶ AQUECENDO",
+    "Paused":    "⏸ PAUSADO",
+    "Idle":      "◯ AGUARDANDO",
+    "Completed": "✓ CONCLUÍDO",
+    "Cancelled": "✕ CANCELADO"
+};
+
 connection.on("HeatingStarted", function (data) {
     updateStatus("Running");
     updateTimeDisplay(data.totalSeconds);
@@ -46,8 +54,17 @@ connection.on("HeatingTimeAdded", function (data) {
 });
 
 function updateStatus(status) {
-    const el = document.getElementById("status-label");
-    if (el) el.textContent = status;
+    const el    = document.getElementById("status-label");
+    const panel = document.getElementById("displayPanel");
+
+    if (el) el.textContent = STATUS_LABELS[status] || status;
+
+    if (panel) {
+        // Remove all existing status-* classes
+        const classes = Array.from(panel.classList);
+        classes.forEach(c => { if (c.startsWith("status-")) panel.classList.remove(c); });
+        panel.classList.add("status-" + status.toLowerCase());
+    }
 }
 
 function updateTimeDisplay(seconds, displayTime) {
@@ -66,7 +83,7 @@ function updateTimeDisplay(seconds, displayTime) {
 
 function updatePower(power) {
     const el = document.getElementById("power-display");
-    if (el) el.textContent = power ? `Potência: ${power}` : "Potência: -";
+    if (el) el.textContent = power ? `POTÊNCIA: ${power}` : "POTÊNCIA: —";
 }
 
 function updateOutput(text) {

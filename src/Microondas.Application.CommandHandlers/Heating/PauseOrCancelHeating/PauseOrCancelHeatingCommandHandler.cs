@@ -21,27 +21,27 @@ public sealed class PauseOrCancelHeatingCommandHandler : ICommandHandler<PauseOr
 
     public Task<Result> Handle(PauseOrCancelHeatingCommand command, CancellationToken cancellationToken)
     {
-        var current = _sessionHolder.Current;
+        var currentHeatingSession = _sessionHolder.Current;
 
-        if (current is null || current.Status == HeatingStatus.Idle)
+        if (currentHeatingSession is null || currentHeatingSession.Status == HeatingStatus.Idle)
         {
             _sessionHolder.Clear();
             return Task.FromResult(Result.Success());
         }
 
-        if (current.Status == HeatingStatus.Running)
+        if (currentHeatingSession.Status == HeatingStatus.Running)
         {
-            var pauseResult = current.Pause();
+            var pauseResult = currentHeatingSession.Pause();
             if (pauseResult.IsFailure) return Task.FromResult(pauseResult);
-            _collector.Collect(current);
+            _collector.Collect(currentHeatingSession);
             return Task.FromResult(Result.Success());
         }
 
-        if (current.Status == HeatingStatus.Paused)
+        if (currentHeatingSession.Status == HeatingStatus.Paused)
         {
-            var cancelResult = current.Cancel();
+            var cancelResult = currentHeatingSession.Cancel();
             if (cancelResult.IsFailure) return Task.FromResult(cancelResult);
-            _collector.Collect(current);
+            _collector.Collect(currentHeatingSession);
             _sessionHolder.Clear();
             return Task.FromResult(Result.Success());
         }

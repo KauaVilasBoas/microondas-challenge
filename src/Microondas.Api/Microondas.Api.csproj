@@ -6,10 +6,13 @@
     <PackageReference Include="Swashbuckle.AspNetCore" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
-    <ProjectReference Include="..\Microondas.Application.Commands\Microondas.Application.Commands.csproj" />
+    <ProjectReference Include="..\Microondas.Application.CommandHandlers\Microondas.Application.CommandHandlers.csproj" />
     <ProjectReference Include="..\Microondas.Application.EventHandlers\Microondas.Application.EventHandlers.csproj" />
     <ProjectReference Include="..\Microondas.Application.ReadModels\Microondas.Application.ReadModels.csproj" />
     <ProjectReference Include="..\Microondas.Infrastructure\Microondas.Infrastructure.csproj" />
     <ProjectReference Include="..\Microondas.Workers\Microondas.Workers.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microondas.Migrations\Microondas.Migrations.csproj" />
   </ItemGroup>
 </Project>

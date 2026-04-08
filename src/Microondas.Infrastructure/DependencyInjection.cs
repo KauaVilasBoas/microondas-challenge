@@ -17,7 +17,10 @@ public static class DependencyInjection
         string connectionString)
     {
         services.AddDbContext<MicroondasDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseSqlServer(
+                connectionString, 
+                b => b.MigrationsAssembly("Microondas.Migrations")
+            ));
 
         services.AddScoped<IHeatingProgramRepository, HeatingProgramRepository>();
         services.AddSingleton<HeatingSessionHolder>();
