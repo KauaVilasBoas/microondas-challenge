@@ -20,11 +20,12 @@ Simulador de micro-ondas digital construído em ASP.NET Core 8, demonstrando **C
 10. [Por que Singleton, Scoped e Transient?](#10-por-que-singleton-scoped-e-transient)
 11. [Fluxo Completo de uma Requisição](#11-fluxo-completo-de-uma-requisição)
 12. [Autenticação no Projeto Web](#12-autenticação-no-projeto-web)
-13. [SignalR e Tempo Real + Polling de Status](#13-signalr-e-tempo-real--polling-de-status)
+13. [SignalR e Tempo Real](#13-signalr-e-tempo-real)
 14. [API REST e Autenticação JWT](#14-api-rest-e-autenticação-jwt)
-15. [Testes](#15-testes)
-16. [Estrutura de Pastas](#16-estrutura-de-pastas)
-17. [Tecnologias](#17-tecnologias)
+15. [Interface Web — Detalhes de Frontend](#15-interface-web--detalhes-de-frontend)
+16. [Testes](#16-testes)
+17. [Estrutura de Pastas](#17-estrutura-de-pastas)
+18. [Tecnologias](#18-tecnologias)
 
 ---
 
@@ -118,7 +119,7 @@ cd microondas-challenge
 
 ### 2. Configure a Connection String
 
-Edite `src/Microondas.Web/appsettings.json`:
+Edite `src/Microondas.Web/appsettings.json` e `src/Microondas.Api/appsettings.json`:
 
 ```json
 {
@@ -146,7 +147,7 @@ Ou via Package Manager Console (Visual Studio):
 Update-Database -Project Microondas.Migrations -StartupProject Microondas.Web
 ```
 
-### 4. Rode o projeto API (obrigatório)
+### 4. Rode o projeto API (obrigatório primeiro)
 
 O projeto Web depende da API para autenticação. A API **deve estar em execução** antes de acessar a interface Web.
 
@@ -155,7 +156,7 @@ cd src/Microondas.Api
 dotnet run
 ```
 
-Swagger UI disponível em `https://localhost:<porta>/swagger`
+Swagger UI disponível em `http://localhost:<porta>/swagger`
 
 **Credenciais padrão:**
 
@@ -164,22 +165,30 @@ Swagger UI disponível em `https://localhost:<porta>/swagger`
 | Usuário | `admin` |
 | Senha | `admin` |
 
-### 5. Rode o projeto Web (interface gráfica)
+### 5. Configure a URL da API no projeto Web
+
+Em `src/Microondas.Web/appsettings.json`, ajuste a porta para a porta HTTP em que a API estiver rodando:
+
+```json
+{
+  "ApiSettings": {
+    "BaseUrl": "http://localhost:5100"
+  }
+}
+```
+
+> **Importante:** Use a URL HTTP (não HTTPS) para evitar problemas de certificado em ambiente de desenvolvimento. A porta exata é exibida no terminal ao rodar a API.
+
+### 6. Rode o projeto Web (interface gráfica)
 
 ```bash
 cd src/Microondas.Web
 dotnet run
 ```
 
-Acesse `https://localhost:<porta>` conforme exibido no terminal. Você será redirecionado para a página de login.
+Acesse `http://localhost:<porta>` conforme exibido no terminal. Você será redirecionado para a página de login.
 
-> **Importante:** A URL base da API é configurada em `src/Microondas.Web/appsettings.json`:
-> ```json
-> { "ApiBaseUrl": "https://localhost:7100" }
-> ```
-> Ajuste para a porta em que a API estiver rodando.
-
-### 6. Rodando os testes
+### 7. Rodando os testes
 
 ```bash
 dotnet test
@@ -197,9 +206,9 @@ O projeto segue **Clean Architecture**. As dependências sempre apontam para den
 │  ┌─────────────────────────────────────────────────────────────────┐ │
 │  │  Aplicação  (CommandHandlers / ReadModels / EventHandlers)      │ │
 │  │  ┌──────────────────────────────────────────────────────────┐   │ │
-│  │  │  Domínio  (Domain + Domain.Contracts)                    │   │ │
+│  │  │  Domínio  (Domain)                                       │   │ │
 │  │  │  ┌───────────────────────────────────────────────────┐   │   │ │
-│  │  │  │  SharedKernel  (Entity, ValueObject, Result, ...)  │   │   │ │
+│  │  │  │  SharedKernel  (Entity, ValueObject, Result, Cqrs) │   │   │ │
 │  │  │  └───────────────────────────────────────────────────┘   │   │ │
 │  │  └──────────────────────────────────────────────────────────┘   │ │
 │  └─────────────────────────────────────────────────────────────────┘ │
@@ -211,16 +220,15 @@ O projeto segue **Clean Architecture**. As dependências sempre apontam para den
 
 | Projeto | Camada | Responsabilidade |
 |---|---|---|
-| `Microondas.SharedKernel` | Núcleo | Base classes, Result\<T\>, Error, Guard |
-| `Microondas.Domain` | Domínio | Agregados, Value Objects, Eventos, Serviços de Domínio |
-| `Microondas.Domain.Contracts` | Contratos | Interfaces de Commands, Queries, Events e Repositórios |
+| `Microondas.SharedKernel` | Núcleo | Base classes, Result\<T\>, Error, Guard; **interfaces CQRS** (ICommand, IQuery, ICommandHandler, IQueryHandler, IDomainEventHandler) |
+| `Microondas.Domain` | Domínio | Agregados, Value Objects, Eventos de Domínio, Serviços de Domínio; **IHeatingProgramRepository** |
 | `Microondas.Application.CommandHandlers` | Aplicação | Handlers de Commands + Pipeline Behaviors |
 | `Microondas.Application.ReadModels` | Aplicação | Handlers de Queries + DTOs de leitura |
 | `Microondas.Application.EventHandlers` | Aplicação | Handlers de Domain Events (SignalR, logs) |
 | `Microondas.Infrastructure` | Infraestrutura | EF Core, repositórios, serviços de sistema |
 | `Microondas.Migrations` | Infraestrutura | Migrations EF Core isoladas do restante |
 | `Microondas.Workers` | Infraestrutura | `BackgroundService` do timer de aquecimento |
-| `Microondas.Web` | Apresentação | ASP.NET Core MVC + Razor Views + SignalR |
+| `Microondas.Web` | Apresentação | ASP.NET Core MVC + Razor Views + SignalR + ViewComponents |
 | `Microondas.Api` | Apresentação | REST API com autenticação JWT |
 
 ---
@@ -229,7 +237,7 @@ O projeto segue **Clean Architecture**. As dependências sempre apontam para den
 
 ### SharedKernel — A Fundação
 
-Contém os blocos construtivos usados por todas as camadas.
+Contém os blocos construtivos usados por todas as camadas, incluindo os contratos CQRS.
 
 #### `Entity`
 
@@ -262,6 +270,20 @@ return Result.Failure(Error.Validation("PowerLevel.Invalid", "Potência deve ser
 #### `Guard`
 
 Métodos estáticos de verificação defensiva (`Guard.AgainstNull`, `Guard.AgainstOutOfRange`, etc.). Lançam exceções técnicas — não de negócio — quando invariantes do sistema são violadas. Diferente do `Result` (que trata erros esperados de negócio), o `Guard` protege contra erros de programação.
+
+#### Interfaces CQRS (`Cqrs/`)
+
+As interfaces de contrato do pipeline CQRS vivem aqui pois são usadas por todas as camadas de aplicação e pelo SharedKernel já referencia `MediatR.Contracts` (para `INotification` no `AggregateRoot`):
+
+```
+ICommand / ICommand<TResponse>           → IRequest<Result> / IRequest<Result<TResponse>>
+ICommandHandler<TCommand>                → IRequestHandler<TCommand, Result>
+IQuery<TResponse>                        → IRequest<TResponse>
+IQueryHandler<TQuery, TResponse>         → IRequestHandler<TQuery, TResponse>
+IDomainEventHandler<TDomainEvent>        → INotificationHandler<TDomainEvent>
+```
+
+Elas ficam em `Microondas.SharedKernel.Cqrs` — separadas semanticamente do núcleo, acessíveis a todos os projetos sem criar um projeto de contratos intermediário.
 
 ---
 
@@ -301,7 +323,9 @@ Cada conceito do domínio com regras de validação vira um value object:
 | `FoodDescription` | Obrigatório, máximo 100 caracteres |
 | `InstructionText` | Opcional, máximo 500 caracteres |
 
-O motivo de criar um value object para algo simples como `PowerLevel` (apenas um `int`) é semântica e proteção: você não pode passar um `int` qualquer onde se espera um `PowerLevel` validado. A validação roda uma única vez, na criação, e o objeto resultante é sempre válido.
+#### `IHeatingProgramRepository` (`Repositories/`)
+
+A interface do repositório vive no domínio — junto ao agregado que ela serve (`HeatingProgram`). A implementação concreta (`HeatingProgramRepository`) fica na Infraestrutura. Isso respeita o **Dependency Inversion Principle**: o domínio define o contrato, a infraestrutura o satisfaz.
 
 #### `PredefinedProgramSeed`
 
@@ -446,6 +470,17 @@ Leitura e escrita têm requisitos diferentes. A leitura de "todos os programas" 
 
 MediatR atua como um **mediador** entre quem envia uma intenção (controller) e quem a executa (handler), sem que um conheça o outro. Isso permite behaviors reutilizáveis (logging, validação, eventos) aplicados uniformemente a todos os commands, e facilita a adição de novos handlers sem modificar quem chama.
 
+### Por que as interfaces CQRS ficam no SharedKernel?
+
+O projeto tinha anteriormente um projeto `Microondas.Domain.Contracts` dedicado apenas a interfaces CQRS e `IHeatingProgramRepository`. Esse projeto foi **dissolvido** pelas seguintes razões:
+
+1. **Vazamento semântico**: as interfaces `ICommandHandler` e `IQueryHandler` são conceitos de aplicação, não de domínio. Colocá-las em "Domain.Contracts" misturava as camadas
+2. **`IHeatingProgramRepository` pertence ao Domain**: a interface do repositório deve ficar junto ao agregado que ela serve, conforme o DIP
+3. **SharedKernel já referencia MediatR.Contracts**: o `AggregateRoot` usa `INotification` — adicionar as interfaces de handler (que precisam do pacote `MediatR` completo) é natural
+4. **Projeto intermediário sem benefício real**: nenhuma camada dependia *apenas* de Domain.Contracts sem também depender de Domain ou Application
+
+**Resultado**: `ICommand`, `IQuery`, `ICommandHandler`, `IQueryHandler`, `IDomainEventHandler` → `Microondas.SharedKernel.Cqrs`; `IHeatingProgramRepository` → `Microondas.Domain.Repositories`.
+
 ### Por que FluentValidation com ValidationBehavior?
 
 A validação de entrada (ex: "tempo entre 1 e 120") é separada da validação de negócio (ex: "sessão não pode pausar se estiver Idle"). FluentValidation cuida da primeira, os agregados cuidam da segunda. O `ValidationBehavior` intercepta qualquer command antes do handler e rejeita com erro padronizado se houver falha.
@@ -509,6 +544,7 @@ O `HeatingSessionHolder` é um **singleton** que guarda a sessão ativa em RAM, 
 | `IHeatingProgramRepository` | **Scoped** | Depende do DbContext; deve ter o mesmo lifetime |
 | `DomainEventCollector` | **Scoped** | Acumula eventos por request; deve ser limpo após cada requisição |
 | `IHeatingHubNotifier` | **Scoped** | Depende de `IHubContext`, que é scoped no ASP.NET Core |
+| `ITokenStore` (`SessionTokenStore`) | **Scoped** | Depende de `IHttpContextAccessor`; escopo por requisição |
 | Validators (FluentValidation) | **Scoped** | Padrão do FluentValidation |
 
 **Por que o worker cria um novo scope a cada tick?**
@@ -524,10 +560,13 @@ Exemplo: usuário clica em **"▶ Iniciar"** no navegador.
 ```
 1. Browser → POST /Heating/Start { TimeInSeconds: 45, PowerLevel: 8 }
 
-2. HeatingController.Start(viewModel)
+2. RequireApiAuthFilter verifica ITokenStore.IsAuthenticated()
+   └─ Token presente? → prossegue
+
+3. HeatingController.Start(viewModel)
    └─ _mediator.Send(new StartHeatingCommand(45, 8, null))
 
-3. MediatR Pipeline:
+4. MediatR Pipeline:
    ├─ LoggingBehavior:     log "Handling StartHeatingCommand"
    ├─ ValidationBehavior:  FluentValidation (45 ∈ [1,120] ✓, 8 ∈ [1,10] ✓)
    ├─ StartHeatingCommandHandler:
@@ -543,9 +582,9 @@ Exemplo: usuário clica em **"▶ Iniciar"** no navegador.
    │        └─ SignalR → Browser: "HeatingStarted" { totalSeconds: 45, powerLevel: 8 }
    └─ LoggingBehavior:     log "Handled StartHeatingCommand"
 
-4. Controller → Redirect para /Heating
+5. Controller → Redirect para /Heating
 
-5. HeatingTimerService (background, 1s depois):
+6. HeatingTimerService (background, 1s depois):
    ├─ Cria scope → resolve IMediator
    └─ _mediator.Send(new TickHeatingCommand())
       └─ TickHeatingCommandHandler:
@@ -557,9 +596,9 @@ Exemplo: usuário clica em **"▶ Iniciar"** no navegador.
          └─ DomainEventDispatchBehavior → HeatingTickedEventHandler
             └─ SignalR → Browser: display "44", output "........"
 
-6. (Repete a cada segundo até RemainingSeconds = 0)
+7. (Repete a cada segundo até RemainingSeconds = 0)
 
-7. Tick final (RemainingSeconds = 0):
+8. Tick final (RemainingSeconds = 0):
    ├─ session.Complete(renderer)
    │  └─ Levanta HeatingCompletedEvent
    ├─ Handler limpa HeatingSessionHolder
@@ -574,48 +613,50 @@ O `Microondas.Web` não possui sua própria camada de autenticação — ele **d
 
 ```
 1. Usuário acessa qualquer rota protegida
-   └─ RequireApiAuthFilter verifica ITokenStore
+   └─ RequireApiAuthFilter verifica ITokenStore.IsAuthenticated()
       └─ Token ausente? → Redireciona para /Auth/Login?returnUrl=...
 
-2. Usuário preenche credenciais na View de Login
+2. Usuário preenche credenciais na View de Login (senha mascarada)
    └─ AuthController.Login(model)
       └─ ApiAuthService.LoginAsync(username, password)
-         └─ POST https://api.../api/auth/login  ← chamada HTTP para a API
+         └─ POST http://api.../api/auth/login  ← única chamada HTTP da Web para a API
             └─ Sucesso: retorna JWT Bearer token
 
-3. Token armazenado na sessão HTTP do ASP.NET Core
+3. Token armazenado na sessão HTTP do ASP.NET Core (server-side)
    └─ SessionTokenStore.SetToken(token)
       └─ HttpContext.Session.SetString("ApiToken", token)
 
-4. Nas requisições seguintes, o token é incluído no header
-   └─ Authorization: Bearer <token>  ← enviado para a API em cada chamada
+4. Todas as rotas protegidas pela sessão ativa
+   └─ ITokenStore.IsAuthenticated() → verifica presença do token na sessão
 ```
 
 ### Componentes do fluxo de auth Web
 
 | Classe | Responsabilidade |
 |---|---|
-| `AuthController` | Login/Logout; redireciona após autenticação |
-| `RequireApiAuthFilter` | Filtro global que protege todas as rotas; redireciona se não autenticado |
-| `IApiAuthService` / `ApiAuthService` | `HttpClient` tipado que chama `POST /api/auth/login` |
-| `ITokenStore` / `SessionTokenStore` | Armazena/recupera o JWT da sessão ASP.NET Core |
-| `LoginViewModel` | ViewModel com `Username`, `Password`, `ReturnUrl` e `ErrorMessage` |
+| `AuthController` | Ações `GET Login`, `POST Login`, `POST Logout` |
+| `RequireApiAuthFilter` | `IAsyncActionFilter` aplicado via `[TypeFilter]`; redireciona rotas desprotegidas |
+| `IApiAuthService` / `ApiAuthService` | `HttpClient` tipado — **única** responsabilidade: chamar `POST /api/auth/login` |
+| `ITokenStore` / `SessionTokenStore` | Armazena/recupera/limpa o JWT da sessão ASP.NET Core |
+| `LoginViewModel` | ViewModel com `Username`, `Password` (tipo `Password`), `ReturnUrl` e `ErrorMessage` |
 
 ### Por que essa abordagem?
 
-O Web e a API compartilham o mesmo domínio e application layer. Criar um segundo sistema de autenticação paralelo seria duplicação. Ao delegar ao `Microondas.Api`, qualquer mudança nas credenciais (ex: adicionar usuários, mudar expiração) reflete automaticamente para ambos os clientes.
+O Web e a API compartilham o mesmo domínio e application layer (via MediatR direto). A autenticação é o único ponto de cruzamento HTTP: o Web chama a API **apenas para validar credenciais e obter o token**. A partir daí, todas as operações de negócio (aquecer, pausar, criar programa) vão direto pelo MediatR, sem round-trip de rede.
 
-O token JWT fica na **sessão server-side** do ASP.NET Core — não no browser. O cliente nunca vê o token diretamente, apenas o cookie de sessão. Isso combina a segurança do JWT (stateless na API) com a conveniência da sessão (stateful no Web).
+O token JWT fica na **sessão server-side** do ASP.NET Core — não no browser. O cliente nunca vê o token diretamente, apenas o cookie de sessão opaco. Isso combina a segurança do JWT (stateless na API) com a conveniência da sessão (stateful no Web).
+
+### Indicador de status da API na barra de navegação
+
+O `_Layout.cshtml` injeta `ITokenStore` e exibe dinamicamente:
+- `● API: OK` (LED verde) — quando autenticado
+- `● API: Off` (LED vermelho piscando) — quando não autenticado
 
 ---
 
-## 13. SignalR e Tempo Real + Polling de Status
+## 13. SignalR e Tempo Real
 
-O projeto usa duas estratégias complementares para manter a UI atualizada em tempo real: **SignalR** (push) e **polling HTTP** (pull de fallback).
-
-### SignalR (push)
-
-O SignalR permite que o servidor **empurre atualizações** para o browser sem que ele precise perguntar.
+O projeto usa **SignalR** para manter o display do micro-ondas atualizado em tempo real via WebSocket.
 
 ### Fluxo de notificação
 
@@ -643,25 +684,6 @@ connection.on("HeatingTicked", function (data) {
 ```
 
 O `HeatingHub` é propositalmente mínimo — apenas registra conexões. Toda a lógica de broadcast está no `HeatingHubNotifier`. O `IHeatingHubNotifier` desacopla os event handlers da implementação concreta: a API usa `NoOpHeatingHubNotifier` (noop), permitindo que os mesmos handlers funcionem nos dois projetos.
-
-### Por que `Clients.All`?
-
-O projeto não tem autenticação por sessão de usuário na interface web — qualquer browser aberto vê o mesmo micro-ondas. Em um cenário com múltiplos usuários independentes, usaríamos `Clients.User(userId)` ou groups.
-
-### Polling HTTP (fallback — `heating-realtime.js`)
-
-Como complemento ao SignalR, o frontend também faz **polling periódico** via `GET /api/heating/status` a cada segundo. Isso garante que o display fique sincronizado mesmo se a conexão WebSocket cair ou o SignalR falhar por alguma razão de rede.
-
-```javascript
-// healing-realtime.js — polling a cada 1s
-async function pollStatus() {
-    const data = await fetchStatus(); // GET /api/heating/status
-    if (data) updateDisplay(data);
-}
-setInterval(pollStatus, 1000);
-```
-
-O polling e o SignalR coexistem: o SignalR é a fonte primária (mais eficiente, push), e o polling garante consistência eventual como segurança extra.
 
 ---
 
@@ -698,22 +720,70 @@ O projeto tem um único usuário admin. SHA256 é usado para não armazenar a se
 
 ### Endpoints da API
 
-| Método | Rota | Descrição |
-|---|---|---|
-| `POST` | `/api/auth/login` | Autentica e retorna JWT |
-| `GET` | `/api/heating/status` | Status atual do aquecimento |
-| `POST` | `/api/heating/start` | Inicia aquecimento manual |
-| `POST` | `/api/heating/quick-start` | Inicia com padrões (30s, pot. 10) |
-| `POST` | `/api/heating/pause-cancel` | Pausa ou cancela |
-| `POST` | `/api/heating/start-program/{id}` | Inicia por programa |
-| `GET` | `/api/programs` | Lista todos os programas |
-| `GET` | `/api/programs/{id}` | Busca programa por ID |
-| `POST` | `/api/programs` | Cria programa customizado |
-| `DELETE` | `/api/programs/{id}` | Remove programa customizado |
+| Método | Rota | Auth | Descrição |
+|---|---|---|---|
+| `POST` | `/api/auth/login` | Público | Autentica e retorna JWT |
+| `GET` | `/api/heating/status` | Bearer | Status atual do aquecimento |
+| `POST` | `/api/heating/start` | Bearer | Inicia aquecimento manual |
+| `POST` | `/api/heating/quick-start` | Bearer | Inicia com padrões (30s, pot. 10) |
+| `POST` | `/api/heating/pause-cancel` | Bearer | Pausa ou cancela |
+| `POST` | `/api/heating/start-program/{id}` | Bearer | Inicia por programa |
+| `GET` | `/api/programs` | Bearer | Lista todos os programas |
+| `GET` | `/api/programs/{id}` | Bearer | Busca programa por ID |
+| `POST` | `/api/programs` | Bearer | Cria programa customizado |
+| `DELETE` | `/api/programs/{id}` | Bearer | Remove programa customizado |
 
 ---
 
-## 15. Testes
+## 15. Interface Web — Detalhes de Frontend
+
+### ViewComponents autossuficientes
+
+A tela de aquecimento é composta por três **ViewComponents** independentes, cada um responsável por buscar seus próprios dados via MediatR:
+
+| ViewComponent | Dados | View |
+|---|---|---|
+| `HeatingDisplay` | `GetHeatingStatusQuery` | Display LCD com tempo, potência e output atual |
+| `DigitalKeyboard` | Nenhum (estático) | Teclado numérico para entrada de tempo/potência |
+| `ProgramSelector` | `GetAllProgramsQuery` | Lista de programas com seleção por rádio |
+
+Chamados na view com:
+```razor
+@await Component.InvokeAsync("HeatingDisplay")
+@await Component.InvokeAsync("DigitalKeyboard", new { targetFieldId = "TimeInSeconds" })
+@await Component.InvokeAsync("ProgramSelector")
+```
+
+Isso mantém os controllers magros — o `HeatingController.Index()` apenas passa o status da sessão para lógica de labels de botões. Nenhum dado de apresentação é carregado no controller.
+
+### Modal de confirmação de exclusão
+
+A exclusão de programas usa um **modal customizado** ao invés do `confirm()` nativo do browser. O modal:
+- Tem animação de escala com spring (`cubic-bezier(0.175, 0.885, 0.32, 1.275)`)
+- Aplica `backdrop-filter: blur(8px)` no overlay
+- Fecha ao pressionar `Escape` ou clicar fora do card
+- Exibe o nome do programa a ser excluído antes da confirmação
+
+```javascript
+function openDeleteModal(btn) {
+    _pendingForm = btn.closest('form');
+    document.getElementById('modalProgramName').textContent = btn.dataset.programName;
+    document.getElementById('deleteModal').classList.add('modal-open');
+}
+```
+
+### Tema visual retro-futurista
+
+A interface usa as fontes **Orbitron** (display principal), **Rajdhani** (textos de interface) e **Share Tech Mono** (output do display), criando uma estética de painel de controle digital:
+
+- Fundo escuro com gradientes e bordas com glow
+- Display LCD com efeito de scanlines
+- LEDs animados para indicar status da API e estado do aquecimento
+- Teclado numérico em grid com teclas pressionáveis via JavaScript
+
+---
+
+## 16. Testes
 
 ### Domain Tests
 
@@ -741,7 +811,7 @@ Testam o pipeline completo com banco real, verificando que behaviors (validation
 
 ---
 
-## 16. Estrutura de Pastas
+## 17. Estrutura de Pastas
 
 ```
 microondas-challenge/
@@ -755,7 +825,13 @@ microondas-challenge/
 │   │   ├── Error.cs
 │   │   ├── BusinessException.cs
 │   │   ├── Guard.cs
-│   │   └── IClock.cs
+│   │   ├── IClock.cs
+│   │   └── Cqrs/                          ← interfaces CQRS
+│   │       ├── ICommand.cs
+│   │       ├── ICommandHandler.cs
+│   │       ├── IQuery.cs
+│   │       ├── IQueryHandler.cs
+│   │       └── IDomainEventHandler.cs
 │   │
 │   ├── Microondas.Domain/
 │   │   ├── Heating/
@@ -767,18 +843,14 @@ microondas-challenge/
 │   │   │       ├── IHeatingOutputRenderer.cs
 │   │   │       ├── HeatingOutputRenderer.cs
 │   │   │       └── HeatingSessionHolder.cs    ← Estado em memória
-│   │   └── Programs/
-│   │       ├── HeatingProgram.cs              ← Agregado de programas
-│   │       ├── ProgramType.cs                 ← Enum Predefined/Custom
-│   │       ├── PredefinedProgramSeed.cs       ← Seed data hardcoded
-│   │       ├── Events/                        ← 2 eventos de domínio
-│   │       └── ValueObjects/                  ← ProgramName, FoodDescription, etc.
-│   │
-│   ├── Microondas.Domain.Contracts/
-│   │   ├── Commands/   ICommand, ICommandHandler
-│   │   ├── Queries/    IQuery, IQueryHandler
-│   │   ├── Events/     IDomainEventHandler
-│   │   └── Repositories/  IHeatingProgramRepository
+│   │   ├── Programs/
+│   │   │   ├── HeatingProgram.cs              ← Agregado de programas
+│   │   │   ├── ProgramType.cs                 ← Enum Predefined/Custom
+│   │   │   ├── PredefinedProgramSeed.cs       ← Seed data hardcoded
+│   │   │   ├── Events/                        ← 2 eventos de domínio
+│   │   │   └── ValueObjects/                  ← ProgramName, FoodDescription, etc.
+│   │   └── Repositories/
+│   │       └── IHeatingProgramRepository.cs   ← Contrato junto ao agregado
 │   │
 │   ├── Microondas.Application.CommandHandlers/
 │   │   ├── Behaviors/
@@ -828,14 +900,28 @@ microondas-challenge/
 │   │
 │   ├── Microondas.Web/
 │   │   ├── Controllers/  AuthController, HeatingController, ProgramsController
-│   │   ├── Filters/      RequireApiAuthFilter       ← protege todas as rotas
+│   │   ├── Filters/      RequireApiAuthFilter       ← protege todas as rotas autenticadas
 │   │   ├── Services/     ApiAuthService, SessionTokenStore, IApiAuthService, ITokenStore
 │   │   ├── Hubs/         HeatingHub, HeatingHubNotifier
 │   │   ├── Middleware/   GlobalExceptionMiddleware
-│   │   ├── ViewComponents/  DigitalKeyboard, HeatingDisplay, ProgramSelector
-│   │   ├── ViewModels/   LoginViewModel
-│   │   ├── Views/        Auth/Login, Heating/Index, Programs/Index, Programs/Create
-│   │   ├── wwwroot/      microwave.css, heating-signalr.js, heating-realtime.js (polling)
+│   │   ├── ViewComponents/
+│   │   │   ├── HeatingDisplayViewComponent.cs ← busca status via MediatR
+│   │   │   ├── ProgramSelectorViewComponent.cs ← busca programas via MediatR
+│   │   │   └── DigitalKeyboardViewComponent.cs
+│   │   ├── ViewModels/   HeatingStatusViewModel, LoginViewModel, ProgramListViewModel
+│   │   ├── Views/
+│   │   │   ├── Auth/Login.cshtml              ← formulário de login com senha mascarada
+│   │   │   ├── Heating/Index.cshtml           ← usa @await Component.InvokeAsync(...)
+│   │   │   ├── Programs/Index.cshtml          ← modal customizado de exclusão
+│   │   │   ├── Programs/Create.cshtml
+│   │   │   └── Shared/
+│   │   │       ├── _Layout.cshtml             ← LED de status da API, nav condicional
+│   │   │       └── Components/               ← templates dos ViewComponents
+│   │   ├── wwwroot/
+│   │   │   ├── css/microwave.css             ← tema retro-futurista + modal + LEDs
+│   │   │   └── js/
+│   │   │       ├── heating-signalr.js        ← cliente WebSocket (SignalR)
+│   │   │       └── digital-keyboard.js       ← teclado numérico
 │   │   └── Program.cs
 │   │
 │   └── Microondas.Api/
@@ -853,24 +939,25 @@ microondas-challenge/
 
 ---
 
-## 17. Tecnologias
+## 18. Tecnologias
 
 | Tecnologia | Versão | Uso |
 |---|---|---|
 | .NET / C# | 8.0 / 12 | Plataforma e linguagem |
-| ASP.NET Core MVC | 8.0 | Interface web com Razor Views |
+| ASP.NET Core MVC | 8.0 | Interface web com Razor Views + ViewComponents |
 | ASP.NET Core Web API | 8.0 | REST API |
 | SignalR | 8.0 | Atualizações em tempo real (WebSocket) |
 | Entity Framework Core | 8.0 | ORM e persistência |
 | SQL Server | qualquer | Banco de dados relacional |
 | MediatR | 12.x | CQRS / mediator pattern / pipeline behaviors |
+| MediatR.Contracts | 12.x | Interfaces base de mensagem (IRequest, INotification) |
 | FluentValidation | 11.x | Validação declarativa de commands |
 | xUnit | 2.x | Framework de testes |
 | FluentAssertions | 6.x | Assertions expressivas |
 | NSubstitute | 5.x | Mocks para testes de aplicação |
 | Swagger / Swashbuckle | 6.x | Documentação interativa da API |
-| ASP.NET Core Session | 8.0 | Armazenamento do JWT no servidor (Web) |
-| HttpClient (IHttpClientFactory) | 8.0 | Comunicação Web → API para autenticação |
+| ASP.NET Core Session | 8.0 | Armazenamento do JWT na sessão server-side (Web) |
+| HttpClient (IHttpClientFactory) | 8.0 | Comunicação Web → API exclusivamente para autenticação |
 
 ---
 

@@ -11,37 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="489e3d2e-55c7-4249-b739-bbc6363b05bd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/Controllers/AuthController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/Filters/RequireApiAuthFilter.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/Services/ApiAuthService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/Services/IApiAuthService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/Services/ITokenStore.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/Services/SessionTokenStore.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/ViewModels/LoginViewModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/Views/Auth/Login.cshtml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Microondas.Web/wwwroot/js/heating-realtime.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Microondas/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Microondas/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Api/Controllers/AuthController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Api/Controllers/AuthController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Api/Controllers/HeatingApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Api/Controllers/HeatingApiController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Api/Controllers/ProgramsApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Api/Controllers/ProgramsApiController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Api/Middleware/ApiExceptionMiddleware.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Api/Middleware/ApiExceptionMiddleware.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Api/Notifications/NoOpHeatingHubNotifier.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Api/Notifications/NoOpHeatingHubNotifier.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Application.EventHandlers/IHeatingHubNotifier.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Application.EventHandlers/IHeatingHubNotifier.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Controllers/HeatingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Controllers/HeatingController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Controllers/ProgramsController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Controllers/ProgramsController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Hubs/HeatingHub.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Hubs/HeatingHub.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Hubs/HeatingHubNotifier.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Hubs/HeatingHubNotifier.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/ViewComponents/DigitalKeyboardViewComponent.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/ViewComponents/DigitalKeyboardViewComponent.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Views/Heating/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Views/Heating/Index.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Views/Programs/Index.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Views/Programs/Index.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Views/Shared/Components/HeatingDisplay/Default.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Views/Shared/Components/HeatingDisplay/Default.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Views/Shared/Components/ProgramSelector/Default.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Views/Shared/Components/ProgramSelector/Default.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/Views/Shared/_Layout.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/Views/Shared/_Layout.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/wwwroot/css/microwave.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/wwwroot/css/microwave.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Microondas.Web/wwwroot/js/heating-signalr.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Microondas.Web/wwwroot/js/heating-signalr.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,7 +34,7 @@
     <setting file="file://$PROJECT_DIR$/src/Microondas.Application.CommandHandlers/Heating/TickHeating/TickHeatingCommand.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Microondas.Application.CommandHandlers/Heating/TickHeating/TickHeatingCommandHandler.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Microondas.Web/Controllers/HeatingController.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/Microondas.Web/Hubs/HeatingHubNotifier.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Microondas.Web/Hubs/HeatingHubNotifier.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Microondas.Web/Program.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Microondas.Web/ViewModels/CreateProgramViewModel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Microondas.Web/Views/Heating/Index.cshtml" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
@@ -252,7 +222,7 @@
       <updated>1775443686393</updated>
       <workItem from="1775443688487" duration="190000" />
       <workItem from="1775615819198" duration="6528000" />
-      <workItem from="1775682703461" duration="6456000" />
+      <workItem from="1775682703461" duration="10086000" />
     </task>
     <servers />
   </component>
