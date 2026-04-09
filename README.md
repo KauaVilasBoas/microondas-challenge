@@ -19,11 +19,12 @@ Simulador de micro-ondas digital construído em ASP.NET Core 8, demonstrando **C
 9. [Por que a Sessão Fica em Memória?](#9-por-que-a-sessão-fica-em-memória)
 10. [Por que Singleton, Scoped e Transient?](#10-por-que-singleton-scoped-e-transient)
 11. [Fluxo Completo de uma Requisição](#11-fluxo-completo-de-uma-requisição)
-12. [SignalR e Tempo Real](#12-signalr-e-tempo-real)
-13. [API REST e Autenticação JWT](#13-api-rest-e-autenticação-jwt)
-14. [Testes](#14-testes)
-15. [Estrutura de Pastas](#15-estrutura-de-pastas)
-16. [Tecnologias](#16-tecnologias)
+12. [Autenticação no Projeto Web](#12-autenticação-no-projeto-web)
+13. [SignalR e Tempo Real + Polling de Status](#13-signalr-e-tempo-real--polling-de-status)
+14. [API REST e Autenticação JWT](#14-api-rest-e-autenticação-jwt)
+15. [Testes](#15-testes)
+16. [Estrutura de Pastas](#16-estrutura-de-pastas)
+17. [Tecnologias](#17-tecnologias)
 
 ---
 
@@ -145,16 +146,9 @@ Ou via Package Manager Console (Visual Studio):
 Update-Database -Project Microondas.Migrations -StartupProject Microondas.Web
 ```
 
-### 4. Rode o projeto Web (interface gráfica)
+### 4. Rode o projeto API (obrigatório)
 
-```bash
-cd src/Microondas.Web
-dotnet run
-```
-
-Acesse `https://localhost:<porta>` conforme exibido no terminal.
-
-### 5. Rode o projeto API (opcional — REST + JWT)
+O projeto Web depende da API para autenticação. A API **deve estar em execução** antes de acessar a interface Web.
 
 ```bash
 cd src/Microondas.Api
@@ -170,15 +164,20 @@ Swagger UI disponível em `https://localhost:<porta>/swagger`
 | Usuário | `admin` |
 | Senha | `admin` |
 
-Autentique-se:
-```bash
-POST /api/auth/login
-Content-Type: application/json
+### 5. Rode o projeto Web (interface gráfica)
 
-{ "username": "admin", "password": "admin" }
+```bash
+cd src/Microondas.Web
+dotnet run
 ```
 
-Use o token retornado: `Authorization: Bearer <token>`
+Acesse `https://localhost:<porta>` conforme exibido no terminal. Você será redirecionado para a página de login.
+
+> **Importante:** A URL base da API é configurada em `src/Microondas.Web/appsettings.json`:
+> ```json
+> { "ApiBaseUrl": "https://localhost:7100" }
+> ```
+> Ajuste para a porta em que a API estiver rodando.
 
 ### 6. Rodando os testes
 
@@ -569,9 +568,54 @@ Exemplo: usuário clica em **"▶ Iniciar"** no navegador.
 
 ---
 
-## 12. SignalR e Tempo Real
+## 12. Autenticação no Projeto Web
 
-O SignalR permite que o servidor **empurre atualizações** para o browser sem que ele precise fazer polling.
+O `Microondas.Web` não possui sua própria camada de autenticação — ele **delega ao `Microondas.Api`**. O fluxo é:
+
+```
+1. Usuário acessa qualquer rota protegida
+   └─ RequireApiAuthFilter verifica ITokenStore
+      └─ Token ausente? → Redireciona para /Auth/Login?returnUrl=...
+
+2. Usuário preenche credenciais na View de Login
+   └─ AuthController.Login(model)
+      └─ ApiAuthService.LoginAsync(username, password)
+         └─ POST https://api.../api/auth/login  ← chamada HTTP para a API
+            └─ Sucesso: retorna JWT Bearer token
+
+3. Token armazenado na sessão HTTP do ASP.NET Core
+   └─ SessionTokenStore.SetToken(token)
+      └─ HttpContext.Session.SetString("ApiToken", token)
+
+4. Nas requisições seguintes, o token é incluído no header
+   └─ Authorization: Bearer <token>  ← enviado para a API em cada chamada
+```
+
+### Componentes do fluxo de auth Web
+
+| Classe | Responsabilidade |
+|---|---|
+| `AuthController` | Login/Logout; redireciona após autenticação |
+| `RequireApiAuthFilter` | Filtro global que protege todas as rotas; redireciona se não autenticado |
+| `IApiAuthService` / `ApiAuthService` | `HttpClient` tipado que chama `POST /api/auth/login` |
+| `ITokenStore` / `SessionTokenStore` | Armazena/recupera o JWT da sessão ASP.NET Core |
+| `LoginViewModel` | ViewModel com `Username`, `Password`, `ReturnUrl` e `ErrorMessage` |
+
+### Por que essa abordagem?
+
+O Web e a API compartilham o mesmo domínio e application layer. Criar um segundo sistema de autenticação paralelo seria duplicação. Ao delegar ao `Microondas.Api`, qualquer mudança nas credenciais (ex: adicionar usuários, mudar expiração) reflete automaticamente para ambos os clientes.
+
+O token JWT fica na **sessão server-side** do ASP.NET Core — não no browser. O cliente nunca vê o token diretamente, apenas o cookie de sessão. Isso combina a segurança do JWT (stateless na API) com a conveniência da sessão (stateful no Web).
+
+---
+
+## 13. SignalR e Tempo Real + Polling de Status
+
+O projeto usa duas estratégias complementares para manter a UI atualizada em tempo real: **SignalR** (push) e **polling HTTP** (pull de fallback).
+
+### SignalR (push)
+
+O SignalR permite que o servidor **empurre atualizações** para o browser sem que ele precise perguntar.
 
 ### Fluxo de notificação
 
@@ -604,9 +648,24 @@ O `HeatingHub` é propositalmente mínimo — apenas registra conexões. Toda a 
 
 O projeto não tem autenticação por sessão de usuário na interface web — qualquer browser aberto vê o mesmo micro-ondas. Em um cenário com múltiplos usuários independentes, usaríamos `Clients.User(userId)` ou groups.
 
+### Polling HTTP (fallback — `heating-realtime.js`)
+
+Como complemento ao SignalR, o frontend também faz **polling periódico** via `GET /api/heating/status` a cada segundo. Isso garante que o display fique sincronizado mesmo se a conexão WebSocket cair ou o SignalR falhar por alguma razão de rede.
+
+```javascript
+// healing-realtime.js — polling a cada 1s
+async function pollStatus() {
+    const data = await fetchStatus(); // GET /api/heating/status
+    if (data) updateDisplay(data);
+}
+setInterval(pollStatus, 1000);
+```
+
+O polling e o SignalR coexistem: o SignalR é a fonte primária (mais eficiente, push), e o polling garante consistência eventual como segurança extra.
+
 ---
 
-## 13. API REST e Autenticação JWT
+## 14. API REST e Autenticação JWT
 
 O projeto `Microondas.Api` expõe a mesma funcionalidade via REST, protegida por **JWT Bearer Token**.
 
@@ -654,7 +713,7 @@ O projeto tem um único usuário admin. SHA256 é usado para não armazenar a se
 
 ---
 
-## 14. Testes
+## 15. Testes
 
 ### Domain Tests
 
@@ -682,7 +741,7 @@ Testam o pipeline completo com banco real, verificando que behaviors (validation
 
 ---
 
-## 15. Estrutura de Pastas
+## 16. Estrutura de Pastas
 
 ```
 microondas-challenge/
@@ -768,12 +827,15 @@ microondas-challenge/
 │   │   └── HeatingTimerService.cs             ← BackgroundService (tick a cada 1s)
 │   │
 │   ├── Microondas.Web/
-│   │   ├── Controllers/  HeatingController, ProgramsController
+│   │   ├── Controllers/  AuthController, HeatingController, ProgramsController
+│   │   ├── Filters/      RequireApiAuthFilter       ← protege todas as rotas
+│   │   ├── Services/     ApiAuthService, SessionTokenStore, IApiAuthService, ITokenStore
 │   │   ├── Hubs/         HeatingHub, HeatingHubNotifier
 │   │   ├── Middleware/   GlobalExceptionMiddleware
 │   │   ├── ViewComponents/  DigitalKeyboard, HeatingDisplay, ProgramSelector
-│   │   ├── Views/        Heating/Index, Programs/Index, Programs/Create
-│   │   ├── wwwroot/      microwave.css, heating-signalr.js, digital-keyboard.js
+│   │   ├── ViewModels/   LoginViewModel
+│   │   ├── Views/        Auth/Login, Heating/Index, Programs/Index, Programs/Create
+│   │   ├── wwwroot/      microwave.css, heating-signalr.js, heating-realtime.js (polling)
 │   │   └── Program.cs
 │   │
 │   └── Microondas.Api/
@@ -791,7 +853,7 @@ microondas-challenge/
 
 ---
 
-## 16. Tecnologias
+## 17. Tecnologias
 
 | Tecnologia | Versão | Uso |
 |---|---|---|
@@ -807,6 +869,8 @@ microondas-challenge/
 | FluentAssertions | 6.x | Assertions expressivas |
 | NSubstitute | 5.x | Mocks para testes de aplicação |
 | Swagger / Swashbuckle | 6.x | Documentação interativa da API |
+| ASP.NET Core Session | 8.0 | Armazenamento do JWT no servidor (Web) |
+| HttpClient (IHttpClientFactory) | 8.0 | Comunicação Web → API para autenticação |
 
 ---
 

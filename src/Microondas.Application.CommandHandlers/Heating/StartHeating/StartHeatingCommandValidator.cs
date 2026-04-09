@@ -11,7 +11,8 @@ public sealed class StartHeatingCommandValidator : AbstractValidator<StartHeatin
         {
             RuleFor(x => x.TimeInSeconds!.Value)
                 .InclusiveBetween(HeatingTime.ManualMinimumSeconds, HeatingTime.ManualMaximumSeconds)
-                .WithMessage($"Tempo deve estar entre {HeatingTime.ManualMinimumSeconds} e {HeatingTime.ManualMaximumSeconds} segundos.");
+                .WithMessage(
+                    $"Tempo deve estar entre {HeatingTime.ManualMinimumSeconds} e {HeatingTime.ManualMaximumSeconds} segundos.");
         });
 
         When(x => x.PowerLevel.HasValue, () =>

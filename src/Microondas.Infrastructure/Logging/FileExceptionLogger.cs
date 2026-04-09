@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace Microondas.Infrastructure.Logging;
@@ -24,7 +25,7 @@ public sealed class FileExceptionLogger
 
     private static string BuildLogEntry(Exception exception, string? context)
     {
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         sb.AppendLine($"[{DateTimeOffset.UtcNow:O}]");
         sb.AppendLine($"Context: {context ?? "N/A"}");
         sb.AppendLine($"Exception: {exception.GetType().FullName}");

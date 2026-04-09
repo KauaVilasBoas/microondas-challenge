@@ -18,7 +18,7 @@
 
         <form asp-action="Login" asp-controller="Auth" method="post">
             @Html.AntiForgeryToken()
-            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl"/>
 
             <div class="auth-field">
                 <label for="Username">Usuário</label>
@@ -28,7 +28,7 @@
                        value="@Model.Username"
                        autocomplete="username"
                        placeholder="admin"
-                       required />
+                       required/>
                 <span asp-validation-for="Username" class="field-error"></span>
             </div>
 
@@ -39,7 +39,7 @@
                        name="Password"
                        autocomplete="current-password"
                        placeholder="••••••"
-                       required />
+                       required/>
                 <span asp-validation-for="Password" class="field-error"></span>
             </div>
 

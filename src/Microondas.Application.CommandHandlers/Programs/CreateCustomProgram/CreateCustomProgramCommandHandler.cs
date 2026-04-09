@@ -1,7 +1,6 @@
 using Microondas.Application.Commands.Behaviors;
 using Microondas.Domain.Contracts.Commands;
 using Microondas.Domain.Contracts.Repositories;
-using Microondas.Domain.Heating.ValueObjects;
 using Microondas.Domain.Programs;
 using Microondas.SharedKernel;
 

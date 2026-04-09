@@ -17,7 +17,9 @@ public sealed class HeatingSession : AggregateRoot
     public Guid? ProgramId { get; private set; }
     public bool IsProgramSession => ProgramId.HasValue;
 
-    private HeatingSession() { }
+    private HeatingSession()
+    {
+    }
 
     public static Result<HeatingSession> Start(
         HeatingParameters parameters,

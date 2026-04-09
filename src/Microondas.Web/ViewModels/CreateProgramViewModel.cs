@@ -23,8 +23,7 @@ public sealed class CreateProgramViewModel
     [Required(ErrorMessage = "Caractere de aquecimento é obrigatório.")]
     public char HeatingChar { get; set; }
 
-    [MaxLength(500)]
-    public string? Instructions { get; set; }
+    [MaxLength(500)] public string? Instructions { get; set; }
 
     public string? ErrorMessage { get; set; }
 }

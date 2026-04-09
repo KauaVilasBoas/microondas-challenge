@@ -18,39 +18,41 @@
 
         <div class="form-group">
             <label asp-for="Name">Nome do Programa</label>
-            <input asp-for="Name" class="form-control" placeholder="Ex: Pipoca Extra" />
+            <input asp-for="Name" class="form-control" placeholder="Ex: Pipoca Extra"/>
             <span asp-validation-for="Name" class="validation-error"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Food">Alimento</label>
-            <input asp-for="Food" class="form-control" placeholder="Ex: Pipoca" />
+            <input asp-for="Food" class="form-control" placeholder="Ex: Pipoca"/>
             <span asp-validation-for="Food" class="validation-error"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="TimeInSeconds">Tempo (segundos)</label>
-            <input asp-for="TimeInSeconds" type="number" min="1" max="120" class="form-control" placeholder="1 – 120" />
+            <input asp-for="TimeInSeconds" type="number" min="1" max="120" class="form-control" placeholder="1 – 120"/>
             <span asp-validation-for="TimeInSeconds" class="validation-error"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Power">Potência (1-10)</label>
-            <input asp-for="Power" type="number" min="1" max="10" class="form-control" placeholder="1 – 10" />
+            <input asp-for="Power" type="number" min="1" max="10" class="form-control" placeholder="1 – 10"/>
             <span asp-validation-for="Power" class="validation-error"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="HeatingChar">Caractere de Aquecimento</label>
             <input asp-for="HeatingChar" maxlength="1" class="form-control"
-                   placeholder="%" style="max-width:72px; font-family:var(--font-mono); font-size:1.5rem; text-align:center;" />
+                   placeholder="%"
+                   style="max-width:72px; font-family:var(--font-mono); font-size:1.5rem; text-align:center;"/>
             <small>Único caractere. Não pode ser "." nem o de programas existentes.</small>
             <span asp-validation-for="HeatingChar" class="validation-error"></span>
         </div>
 
         <div class="form-group">
             <label asp-for="Instructions">Instruções (opcional)</label>
-            <textarea asp-for="Instructions" rows="4" class="form-control" placeholder="Instruções de uso..."></textarea>
+            <textarea asp-for="Instructions" rows="4" class="form-control"
+                      placeholder="Instruções de uso..."></textarea>
             <span asp-validation-for="Instructions" class="validation-error"></span>
         </div>
 

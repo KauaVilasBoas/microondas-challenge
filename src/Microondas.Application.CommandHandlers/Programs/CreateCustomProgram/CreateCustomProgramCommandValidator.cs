@@ -10,15 +10,18 @@ public sealed class CreateCustomProgramCommandValidator : AbstractValidator<Crea
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Nome do programa é obrigatório.")
-            .MaximumLength(ProgramName.MaxLength).WithMessage($"Nome não pode exceder {ProgramName.MaxLength} caracteres.");
+            .MaximumLength(ProgramName.MaxLength)
+            .WithMessage($"Nome não pode exceder {ProgramName.MaxLength} caracteres.");
 
         RuleFor(x => x.Food)
             .NotEmpty().WithMessage("Descrição do alimento é obrigatória.")
-            .MaximumLength(FoodDescription.MaxLength).WithMessage($"Alimento não pode exceder {FoodDescription.MaxLength} caracteres.");
+            .MaximumLength(FoodDescription.MaxLength)
+            .WithMessage($"Alimento não pode exceder {FoodDescription.MaxLength} caracteres.");
 
         RuleFor(x => x.TimeInSeconds)
             .InclusiveBetween(HeatingTime.ManualMinimumSeconds, HeatingTime.ManualMaximumSeconds)
-            .WithMessage($"Tempo deve estar entre {HeatingTime.ManualMinimumSeconds} e {HeatingTime.ManualMaximumSeconds} segundos.");
+            .WithMessage(
+                $"Tempo deve estar entre {HeatingTime.ManualMinimumSeconds} e {HeatingTime.ManualMaximumSeconds} segundos.");
 
         RuleFor(x => x.Power)
             .InclusiveBetween(PowerLevel.Minimum, PowerLevel.Maximum)

@@ -9,7 +9,10 @@ public sealed class HeatingSessionHolder
 
     public HeatingSession? Current
     {
-        get { lock (_lock) return _current; }
+        get
+        {
+            lock (_lock) return _current;
+        }
     }
 
     public void Set(HeatingSession session)

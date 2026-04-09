@@ -1,12 +1,15 @@
 using FluentValidation;
 using Microondas.Application.Commands.Behaviors;
+using Microondas.Application.Commands.Heating.StartHeating;
 using Microondas.Application.EventHandlers;
+using Microondas.Application.EventHandlers.Heating;
+using Microondas.Application.ReadModels.Heating;
 using Microondas.Infrastructure;
-using Microondas.Infrastructure.Logging;
 using Microondas.Web.Filters;
 using Microondas.Web.Hubs;
 using Microondas.Web.Middleware;
 using Microondas.Web.Services;
+using Microondas.Workers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +18,7 @@ builder.Services.AddSignalR();
 
 // ── Database & domain infrastructure ─────────────────────────────────────────
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+                       ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddInfrastructure(connectionString);
 
@@ -23,9 +26,9 @@ builder.Services.AddInfrastructure(connectionString);
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblies(
-        typeof(Microondas.Application.Commands.Heating.StartHeating.StartHeatingCommandHandler).Assembly,
-        typeof(Microondas.Application.ReadModels.Heating.GetHeatingStatusQueryHandler).Assembly,
-        typeof(Microondas.Application.EventHandlers.Heating.HeatingStartedEventHandler).Assembly);
+        typeof(StartHeatingCommandHandler).Assembly,
+        typeof(GetHeatingStatusQueryHandler).Assembly,
+        typeof(HeatingStartedEventHandler).Assembly);
 
     cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
     cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
@@ -33,13 +36,13 @@ builder.Services.AddMediatR(cfg =>
 });
 
 builder.Services.AddValidatorsFromAssembly(
-    typeof(Microondas.Application.Commands.Heating.StartHeating.StartHeatingCommandValidator).Assembly);
+    typeof(StartHeatingCommandValidator).Assembly);
 
 builder.Services.AddScoped<DomainEventCollector>();
 builder.Services.AddScoped<IHeatingHubNotifier, HeatingHubNotifier>();
 
 // ── Background timer (ticks the heating session every second) ─────────────────
-builder.Services.AddHostedService<Microondas.Workers.HeatingTimerService>();
+builder.Services.AddHostedService<HeatingTimerService>();
 
 // ── Session — stores the Bearer token returned by the REST API ────────────────
 builder.Services.AddDistributedMemoryCache();
@@ -57,7 +60,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITokenStore, SessionTokenStore>();
 
 var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"]
-    ?? throw new InvalidOperationException("'ApiSettings:BaseUrl' is not configured.");
+                 ?? throw new InvalidOperationException("'ApiSettings:BaseUrl' is not configured.");
 
 builder.Services.AddHttpClient<IApiAuthService, ApiAuthService>(client =>
 {

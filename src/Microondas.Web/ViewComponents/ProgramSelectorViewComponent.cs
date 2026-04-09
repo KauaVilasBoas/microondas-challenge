@@ -1,6 +1,6 @@
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microondas.Application.ReadModels.Programs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Microondas.Web.ViewComponents;
 

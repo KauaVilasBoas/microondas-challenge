@@ -39,7 +39,6 @@ public sealed class ApiAuthService : IApiAuthService
         }
         catch (HttpRequestException ex)
         {
-            // Connection refused / DNS failure — expected when the API is not running.
             _logger.LogWarning("API unreachable at login: {Message}", ex.Message);
             return Result<string>.Failure(
                 Error.Validation("Auth.Unavailable",

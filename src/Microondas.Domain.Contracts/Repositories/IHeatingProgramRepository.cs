@@ -10,7 +10,8 @@ public interface IHeatingProgramRepository
 
     Task<bool> ExistsByCharacterAsync(char character, CancellationToken cancellationToken = default);
 
-    Task<bool> ExistsByCharacterExcludingAsync(char character, Guid excludeId, CancellationToken cancellationToken = default);
+    Task<bool> ExistsByCharacterExcludingAsync(char character, Guid excludeId,
+        CancellationToken cancellationToken = default);
 
     Task AddAsync<TProgram>(TProgram program, CancellationToken cancellationToken = default)
         where TProgram : class;

@@ -1,6 +1,6 @@
+using Microondas.Domain.Programs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microondas.Domain.Programs;
 
 namespace Microondas.Infrastructure.Persistence.Configurations;
 

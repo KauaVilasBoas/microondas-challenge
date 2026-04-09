@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using Microondas.Domain.Contracts.Repositories;
 using Microondas.Domain.Programs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Microondas.Infrastructure.Persistence.Repositories;
 
@@ -38,7 +38,8 @@ public sealed class HeatingProgramRepository : IHeatingProgramRepository
         await _context.HeatingPrograms
             .AnyAsync(p => p.Character.Value == character, cancellationToken);
 
-    public async Task<bool> ExistsByCharacterExcludingAsync(char character, Guid excludeId, CancellationToken cancellationToken = default) =>
+    public async Task<bool> ExistsByCharacterExcludingAsync(char character, Guid excludeId,
+        CancellationToken cancellationToken = default) =>
         await _context.HeatingPrograms
             .AnyAsync(p => p.Character.Value == character && p.Id != excludeId, cancellationToken);
 

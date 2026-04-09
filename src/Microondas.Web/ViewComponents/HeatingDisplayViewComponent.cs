@@ -1,7 +1,7 @@
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microondas.Application.ReadModels.Heating;
 using Microondas.Web.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Microondas.Web.ViewComponents;
 

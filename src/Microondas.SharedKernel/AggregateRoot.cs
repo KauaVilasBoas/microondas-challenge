@@ -8,8 +8,13 @@ public abstract class AggregateRoot : Entity
 
     public IReadOnlyList<INotification> DomainEvents => _domainEvents.AsReadOnly();
 
-    protected AggregateRoot() : base() { }
-    protected AggregateRoot(Guid id) : base(id) { }
+    protected AggregateRoot() : base()
+    {
+    }
+
+    protected AggregateRoot(Guid id) : base(id)
+    {
+    }
 
     protected void RaiseDomainEvent(INotification domainEvent) =>
         _domainEvents.Add(domainEvent);

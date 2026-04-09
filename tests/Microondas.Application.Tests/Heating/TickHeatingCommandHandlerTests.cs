@@ -2,7 +2,6 @@ using FluentAssertions;
 using Microondas.Application.Commands.Behaviors;
 using Microondas.Application.Commands.Heating.StartHeating;
 using Microondas.Application.Commands.Heating.TickHeating;
-using Microondas.Domain.Heating;
 using Microondas.Domain.Services;
 using Xunit;
 

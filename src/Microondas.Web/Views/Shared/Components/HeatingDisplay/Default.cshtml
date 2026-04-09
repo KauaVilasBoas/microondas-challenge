@@ -1,14 +1,15 @@
 @model HeatingStatusViewModel
 @{
-    var statusStr  = Model.Status ?? "Idle";
+    var statusStr = Model.Status ?? "Idle";
     var statusClass = "status-" + statusStr.ToLower();
 
-    string StatusLabel(string s) => s switch {
-        "Running"   => "▶ AQUECENDO",
-        "Paused"    => "⏸ PAUSADO",
+    string StatusLabel(string s) => s switch
+    {
+        "Running" => "▶ AQUECENDO",
+        "Paused" => "⏸ PAUSADO",
         "Completed" => "✓ CONCLUÍDO",
         "Cancelled" => "✕ CANCELADO",
-        _           => "◯ AGUARDANDO"
+        _ => "◯ AGUARDANDO"
     };
 }
 

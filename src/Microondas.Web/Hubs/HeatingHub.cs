@@ -7,4 +7,6 @@ namespace Microondas.Web.Hubs;
 /// The hub itself is empty — all push logic lives in <see cref="HeatingHubNotifier"/>,
 /// which is injected into the MediatR event handlers.
 /// </summary>
-public sealed class HeatingHub : Hub { }
+public sealed class HeatingHub : Hub
+{
+}

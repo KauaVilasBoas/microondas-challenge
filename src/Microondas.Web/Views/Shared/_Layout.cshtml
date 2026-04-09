@@ -3,51 +3,53 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - Micro-ondas Digital</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/microwave.css" asp-append-version="true" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="~/css/microwave.css" asp-append-version="true"/>
 </head>
 <body>
-    <header>
-        <nav>
+<header>
+    <nav>
             <span class="nav-brand">
                 <span class="nav-brand-dot"></span>
                 Micro-ondas
             </span>
 
-            @if (TokenStore.IsAuthenticated())
-            {
-                <a href="/Heating">Aquecimento</a>
-                <a href="/Programs">Programas</a>
-                <span class="nav-auth-status nav-auth-ok" title="Autenticado com a API">
+        @if (TokenStore.IsAuthenticated())
+        {
+            <a href="/Heating">Aquecimento</a>
+            <a href="/Programs">Programas</a>
+            <span class="nav-auth-status nav-auth-ok" title="Autenticado com a API">
                     <span class="auth-led auth-led-ok"></span>
                     API: OK
                 </span>
-                <form asp-action="Logout" asp-controller="Auth" method="post" class="nav-logout-form">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn-logout">Sair</button>
-                </form>
-            }
-            else
-            {
-                <span class="nav-auth-status nav-auth-fail" title="Não autenticado">
+            <form asp-action="Logout" asp-controller="Auth" method="post" class="nav-logout-form">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-logout">Sair</button>
+            </form>
+        }
+        else
+        {
+            <span class="nav-auth-status nav-auth-fail" title="Não autenticado">
                     <span class="auth-led auth-led-fail"></span>
                     API: Off
                 </span>
-                <a href="/Auth/Login" class="btn-login">Entrar</a>
-            }
-        </nav>
-    </header>
-    <main>
-        @RenderBody()
-    </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-    <script src="~/js/heating-signalr.js" asp-append-version="true"></script>
-    <script src="~/js/digital-keyboard.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+            <a href="/Auth/Login" class="btn-login">Entrar</a>
+        }
+    </nav>
+</header>
+<main>
+    @RenderBody()
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+<script src="~/js/heating-signalr.js" asp-append-version="true"></script>
+<script src="~/js/digital-keyboard.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

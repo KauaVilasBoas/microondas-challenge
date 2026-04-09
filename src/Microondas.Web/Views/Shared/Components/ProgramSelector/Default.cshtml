@@ -1,7 +1,9 @@
 @model IReadOnlyList<ProgramReadModel>
-@using Microondas.Application.ReadModels.Programs
 @{
-    if (!Model.Any()) { return; }
+    if (!Model.Any())
+    {
+        return;
+    }
 }
 
 <div class="programs-section">
@@ -16,7 +18,7 @@
             @foreach (var program in Model)
             {
                 <label class="program-item @(program.IsCustom ? "program-custom" : "")">
-                    <input type="radio" name="SelectedProgramId" value="@program.Id" />
+                    <input type="radio" name="SelectedProgramId" value="@program.Id"/>
                     <span class="program-name">@program.Name</span>
                     <span class="program-food">@program.Food</span>
                     <span class="program-details">

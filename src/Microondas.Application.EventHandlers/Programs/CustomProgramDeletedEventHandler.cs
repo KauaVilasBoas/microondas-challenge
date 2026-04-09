@@ -1,6 +1,6 @@
-using Microsoft.Extensions.Logging;
 using Microondas.Domain.Contracts.Events;
 using Microondas.Domain.Programs.Events;
+using Microsoft.Extensions.Logging;
 
 namespace Microondas.Application.EventHandlers.Programs;
 

@@ -4,9 +4,9 @@
 
     // Status is passed by the controller solely to drive the action-button labels.
     // The LCD display is rendered by HeatingDisplayViewComponent (self-fetches via MediatR).
-    var status    = ViewData["HeatingStatus"] as HeatingStatusViewModel;
-    var isRunning = status?.IsRunning  == true;
-    var isPaused  = status?.IsPaused   == true;
+    var status = ViewData["HeatingStatus"] as HeatingStatusViewModel;
+    var isRunning = status?.IsRunning == true;
+    var isPaused = status?.IsPaused == true;
 }
 
 <div class="microwave-container">
@@ -30,7 +30,7 @@
                         <label for="TimeInSeconds">Tempo (segundos)</label>
                         <input type="number" id="TimeInSeconds" name="TimeInSeconds"
                                min="1" max="120" placeholder="1–120"
-                               value="@Model.TimeInSeconds" />
+                               value="@Model.TimeInSeconds"/>
                     </div>
                     @await Component.InvokeAsync("DigitalKeyboard", new { targetFieldId = "TimeInSeconds" })
                 </div>
@@ -40,7 +40,7 @@
                         <label for="PowerLevel">Potência (1-10)</label>
                         <input type="number" id="PowerLevel" name="PowerLevel"
                                min="1" max="10" placeholder="1–10"
-                               value="@Model.PowerLevel" />
+                               value="@Model.PowerLevel"/>
                     </div>
                     @await Component.InvokeAsync("DigitalKeyboard", new { targetFieldId = "PowerLevel" })
                 </div>

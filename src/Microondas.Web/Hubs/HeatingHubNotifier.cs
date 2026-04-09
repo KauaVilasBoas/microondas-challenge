@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.SignalR;
 using Microondas.Application.EventHandlers;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Microondas.Web.Hubs;
 

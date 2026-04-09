@@ -1,10 +1,10 @@
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microondas.Application.Commands.Heating.TickHeating;
 using Microondas.Domain.Heating;
 using Microondas.Domain.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Microondas.Workers;
 

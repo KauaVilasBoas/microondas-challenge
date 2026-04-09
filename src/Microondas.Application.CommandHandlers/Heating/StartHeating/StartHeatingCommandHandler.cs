@@ -1,4 +1,3 @@
-using MediatR;
 using Microondas.Application.Commands.Behaviors;
 using Microondas.Domain.Contracts.Commands;
 using Microondas.Domain.Heating;

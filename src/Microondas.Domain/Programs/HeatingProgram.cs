@@ -18,7 +18,9 @@ public sealed class HeatingProgram : AggregateRoot
     public bool IsPredefined => Type == ProgramType.Predefined;
     public bool IsCustom => Type == ProgramType.Custom;
 
-    private HeatingProgram() { }
+    private HeatingProgram()
+    {
+    }
 
     public static HeatingProgram CreatePredefined(
         string name,

@@ -1,5 +1,4 @@
 using MediatR;
-using Microondas.SharedKernel;
 
 namespace Microondas.Application.Commands.Behaviors;
 
