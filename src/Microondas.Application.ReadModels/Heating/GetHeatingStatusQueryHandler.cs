@@ -1,4 +1,4 @@
-using Microondas.Domain.Contracts.Queries;
+using Microondas.SharedKernel.Cqrs;
 using Microondas.Domain.Heating.ValueObjects;
 using Microondas.Domain.Services;
 

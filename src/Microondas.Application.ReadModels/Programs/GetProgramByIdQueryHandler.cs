@@ -1,5 +1,5 @@
-using Microondas.Domain.Contracts.Queries;
-using Microondas.Domain.Contracts.Repositories;
+using Microondas.SharedKernel.Cqrs;
+using Microondas.Domain.Repositories;
 using Microondas.Domain.Programs;
 
 namespace Microondas.Application.ReadModels.Programs;

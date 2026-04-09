@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Microondas.Application.ReadModels.Programs;
-using Microondas.Domain.Contracts.Repositories;
+using Microondas.Domain.Repositories;
 using Microondas.Domain.Programs;
 using Moq;
 using Xunit;

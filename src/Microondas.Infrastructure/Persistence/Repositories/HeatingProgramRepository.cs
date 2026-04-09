@@ -1,4 +1,4 @@
-using Microondas.Domain.Contracts.Repositories;
+using Microondas.Domain.Repositories;
 using Microondas.Domain.Programs;
 using Microsoft.EntityFrameworkCore;
 

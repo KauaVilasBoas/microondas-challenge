@@ -1,4 +1,4 @@
-namespace Microondas.Domain.Contracts.Repositories;
+namespace Microondas.Domain.Repositories;
 
 public interface IHeatingProgramRepository
 {

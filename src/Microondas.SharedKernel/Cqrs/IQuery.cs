@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Microondas.Domain.Contracts.Queries;
+namespace Microondas.SharedKernel.Cqrs;
 
 public interface IQuery<TResponse> : IRequest<TResponse>
 {

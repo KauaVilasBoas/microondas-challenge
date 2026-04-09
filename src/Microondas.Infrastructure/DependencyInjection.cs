@@ -1,4 +1,4 @@
-using Microondas.Domain.Contracts.Repositories;
+using Microondas.Domain.Repositories;
 using Microondas.Domain.Services;
 using Microondas.Infrastructure.Logging;
 using Microondas.Infrastructure.Persistence;

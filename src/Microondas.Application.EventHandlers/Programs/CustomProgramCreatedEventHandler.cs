@@ -1,4 +1,4 @@
-using Microondas.Domain.Contracts.Events;
+using Microondas.SharedKernel.Cqrs;
 using Microondas.Domain.Programs.Events;
 using Microsoft.Extensions.Logging;
 

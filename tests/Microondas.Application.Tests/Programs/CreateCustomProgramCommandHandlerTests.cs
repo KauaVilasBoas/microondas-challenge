@@ -1,7 +1,7 @@
 using FluentAssertions;
 using Microondas.Application.Commands.Behaviors;
 using Microondas.Application.Commands.Programs.CreateCustomProgram;
-using Microondas.Domain.Contracts.Repositories;
+using Microondas.Domain.Repositories;
 using Microondas.Domain.Programs;
 using Moq;
 using Xunit;

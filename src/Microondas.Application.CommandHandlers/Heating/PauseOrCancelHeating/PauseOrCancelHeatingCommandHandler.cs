@@ -1,5 +1,5 @@
 using Microondas.Application.Commands.Behaviors;
-using Microondas.Domain.Contracts.Commands;
+using Microondas.SharedKernel.Cqrs;
 using Microondas.Domain.Heating;
 using Microondas.Domain.Services;
 using Microondas.SharedKernel;

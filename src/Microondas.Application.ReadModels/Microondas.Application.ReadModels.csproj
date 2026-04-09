@@ -5,6 +5,5 @@
   <ItemGroup>
     <PackageReference Include="MediatR" />
     <ProjectReference Include="..\Microondas.Domain\Microondas.Domain.csproj" />
-    <ProjectReference Include="..\Microondas.Domain.Contracts\Microondas.Domain.Contracts.csproj" />
   </ItemGroup>
 </Project>

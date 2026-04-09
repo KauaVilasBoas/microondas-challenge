@@ -1,4 +1,4 @@
-using Microondas.Domain.Contracts.Queries;
+using Microondas.SharedKernel.Cqrs;
 
 namespace Microondas.Application.ReadModels.Programs;
 

@@ -1,4 +1,4 @@
-using Microondas.Domain.Contracts.Events;
+using Microondas.SharedKernel.Cqrs;
 using Microondas.Domain.Heating.Events;
 
 namespace Microondas.Application.EventHandlers.Heating;

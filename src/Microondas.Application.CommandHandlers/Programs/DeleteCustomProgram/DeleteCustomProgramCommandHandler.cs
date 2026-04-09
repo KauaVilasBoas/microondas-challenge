@@ -1,6 +1,6 @@
 using Microondas.Application.Commands.Behaviors;
-using Microondas.Domain.Contracts.Commands;
-using Microondas.Domain.Contracts.Repositories;
+using Microondas.SharedKernel.Cqrs;
+using Microondas.Domain.Repositories;
 using Microondas.Domain.Programs;
 using Microondas.SharedKernel;
 

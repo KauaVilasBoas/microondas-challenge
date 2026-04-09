@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MediatR" />
-    <ProjectReference Include="..\Microondas.SharedKernel\Microondas.SharedKernel.csproj" />
-  </ItemGroup>
-</Project>

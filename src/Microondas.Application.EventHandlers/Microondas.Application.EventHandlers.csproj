@@ -7,6 +7,5 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <ProjectReference Include="..\Microondas.Domain\Microondas.Domain.csproj" />
-    <ProjectReference Include="..\Microondas.Domain.Contracts\Microondas.Domain.Contracts.csproj" />
   </ItemGroup>
 </Project>

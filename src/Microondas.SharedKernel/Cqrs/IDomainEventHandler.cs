@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Microondas.Domain.Contracts.Events;
+namespace Microondas.SharedKernel.Cqrs;
 
 public interface IDomainEventHandler<TDomainEvent> : INotificationHandler<TDomainEvent>
     where TDomainEvent : INotification

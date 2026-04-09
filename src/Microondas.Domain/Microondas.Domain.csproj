@@ -4,6 +4,5 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microondas.SharedKernel\Microondas.SharedKernel.csproj" />
-    <ProjectReference Include="..\Microondas.Domain.Contracts\Microondas.Domain.Contracts.csproj" />
   </ItemGroup>
 </Project>

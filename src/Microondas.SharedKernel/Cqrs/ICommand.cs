@@ -1,7 +1,6 @@
 using MediatR;
-using Microondas.SharedKernel;
 
-namespace Microondas.Domain.Contracts.Commands;
+namespace Microondas.SharedKernel.Cqrs;
 
 public interface ICommand : IRequest<Result>
 {

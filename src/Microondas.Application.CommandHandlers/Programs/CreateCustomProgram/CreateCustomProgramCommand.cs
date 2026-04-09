@@ -1,4 +1,4 @@
-using Microondas.Domain.Contracts.Commands;
+using Microondas.SharedKernel.Cqrs;
 
 namespace Microondas.Application.Commands.Programs.CreateCustomProgram;
 
