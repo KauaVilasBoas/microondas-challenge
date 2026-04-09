@@ -30,11 +30,13 @@ public sealed class ApiExceptionMiddleware
         catch (Exception ex)
         {
             await _exceptionLogger.LogAsync(ex, context.Request.Path);
-            await WriteErrorResponse(context, HttpStatusCode.InternalServerError, "InternalError", "An unexpected error occurred.");
+            await WriteErrorResponse(context, HttpStatusCode.InternalServerError, "InternalError",
+                "An unexpected error occurred.");
         }
     }
 
-    private static async Task WriteErrorResponse(HttpContext context, HttpStatusCode statusCode, string code, string message)
+    private static async Task WriteErrorResponse(HttpContext context, HttpStatusCode statusCode, string code,
+        string message)
     {
         context.Response.StatusCode = (int)statusCode;
         context.Response.ContentType = "application/json";

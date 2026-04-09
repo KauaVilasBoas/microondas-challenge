@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microondas.Application.Commands.Programs.CreateCustomProgram;
 using Microondas.Application.Commands.Programs.DeleteCustomProgram;
 using Microondas.Application.ReadModels.Programs;
+using Microondas.Web.Filters;
 using Microondas.Web.ViewModels;
 
 namespace Microondas.Web.Controllers;
 
+[TypeFilter(typeof(RequireApiAuthFilter))]
 public sealed class ProgramsController : Controller
 {
     private readonly IMediator _mediator;
@@ -27,15 +29,13 @@ public sealed class ProgramsController : Controller
     {
         if (!ModelState.IsValid) return View(model);
 
-        var command = new CreateCustomProgramCommand(
+        var result = await _mediator.Send(new CreateCustomProgramCommand(
             model.Name,
             model.Food,
             model.TimeInSeconds,
             model.Power,
             model.HeatingChar,
-            model.Instructions);
-
-        var result = await _mediator.Send(command);
+            model.Instructions));
 
         if (result.IsFailure)
         {

@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using Microondas.Api.Authentication;
 using Microondas.Infrastructure.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Microondas.Api.Controllers;
 

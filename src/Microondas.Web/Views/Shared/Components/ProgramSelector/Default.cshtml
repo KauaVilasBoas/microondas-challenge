@@ -1,14 +1,37 @@
 @model IReadOnlyList<ProgramReadModel>
+@using Microondas.Application.ReadModels.Programs
+@{
+    if (!Model.Any()) { return; }
+}
 
-<div class="program-selector-component">
-    <h3>Programas Disponíveis</h3>
-    <ul>
-        @foreach (var program in Model)
-        {
-            <li class="@(program.IsCustom ? "custom-program" : "predefined-program")">
-                <strong>@program.Name</strong> - @program.Food
-                (@(program.TimeInSeconds / 60)min, Pot: @program.Power, Char: '@program.HeatingChar')
-            </li>
-        }
-    </ul>
+<div class="programs-section">
+    <div class="section-header">
+        <h2>Programas de Aquecimento</h2>
+    </div>
+
+    <form asp-action="StartProgram" asp-controller="Heating" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="program-list">
+            @foreach (var program in Model)
+            {
+                <label class="program-item @(program.IsCustom ? "program-custom" : "")">
+                    <input type="radio" name="SelectedProgramId" value="@program.Id" />
+                    <span class="program-name">@program.Name</span>
+                    <span class="program-food">@program.Food</span>
+                    <span class="program-details">
+                        @(program.TimeInSeconds / 60)min @(program.TimeInSeconds % 60)s
+                        · Pot @program.Power
+                        · '@program.HeatingChar'
+                    </span>
+                    @if (program.Instructions != null)
+                    {
+                        <small class="program-instructions">@program.Instructions</small>
+                    }
+                </label>
+            }
+        </div>
+
+        <button type="submit" class="btn btn-program">▶ Iniciar Programa</button>
+    </form>
 </div>

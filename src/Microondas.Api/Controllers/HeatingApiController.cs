@@ -1,11 +1,11 @@
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microondas.Application.Commands.Heating.PauseOrCancelHeating;
 using Microondas.Application.Commands.Heating.QuickStartHeating;
 using Microondas.Application.Commands.Heating.StartHeating;
 using Microondas.Application.Commands.Heating.StartProgramHeating;
 using Microondas.Application.ReadModels.Heating;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Microondas.Api.Controllers;
 

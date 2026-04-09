@@ -1,0 +1,55 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login — Micro-ondas Digital";
+}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-brand-dot"></div>
+            <h1>Micro-ondas Digital</h1>
+            <p class="auth-subtitle">Autentique-se com a API para continuar</p>
+        </div>
+
+        @if (Model.ErrorMessage != null)
+        {
+            <div class="alert alert-error">@Model.ErrorMessage</div>
+        }
+
+        <form asp-action="Login" asp-controller="Auth" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+
+            <div class="auth-field">
+                <label for="Username">Usuário</label>
+                <input type="text"
+                       id="Username"
+                       name="Username"
+                       value="@Model.Username"
+                       autocomplete="username"
+                       placeholder="admin"
+                       required />
+                <span asp-validation-for="Username" class="field-error"></span>
+            </div>
+
+            <div class="auth-field">
+                <label for="Password">Senha</label>
+                <input type="password"
+                       id="Password"
+                       name="Password"
+                       autocomplete="current-password"
+                       placeholder="••••••"
+                       required />
+                <span asp-validation-for="Password" class="field-error"></span>
+            </div>
+
+            <button type="submit" class="btn btn-start auth-btn">
+                ▶ Autenticar com a API
+            </button>
+        </form>
+
+        <div class="auth-hint">
+            <small>Credenciais padrão: <code>admin</code> / <code>admin</code></small>
+        </div>
+    </div>
+</div>

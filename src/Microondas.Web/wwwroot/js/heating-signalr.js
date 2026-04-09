@@ -6,9 +6,9 @@ const connection = new signalR.HubConnectionBuilder()
     .build();
 
 const STATUS_LABELS = {
-    "Running":   "▶ AQUECENDO",
-    "Paused":    "⏸ PAUSADO",
-    "Idle":      "◯ AGUARDANDO",
+    "Running": "▶ AQUECENDO",
+    "Paused": "⏸ PAUSADO",
+    "Idle": "◯ AGUARDANDO",
     "Completed": "✓ CONCLUÍDO",
     "Cancelled": "✕ CANCELADO"
 };
@@ -54,7 +54,7 @@ connection.on("HeatingTimeAdded", function (data) {
 });
 
 function updateStatus(status) {
-    const el    = document.getElementById("status-label");
+    const el = document.getElementById("status-label");
     const panel = document.getElementById("displayPanel");
 
     if (el) el.textContent = STATUS_LABELS[status] || status;
@@ -62,7 +62,9 @@ function updateStatus(status) {
     if (panel) {
         // Remove all existing status-* classes
         const classes = Array.from(panel.classList);
-        classes.forEach(c => { if (c.startsWith("status-")) panel.classList.remove(c); });
+        classes.forEach(c => {
+            if (c.startsWith("status-")) panel.classList.remove(c);
+        });
         panel.classList.add("status-" + status.toLowerCase());
     }
 }

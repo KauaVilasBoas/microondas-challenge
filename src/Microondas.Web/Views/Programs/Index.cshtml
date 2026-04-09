@@ -48,11 +48,14 @@
                     <td>
                         @if (program.IsCustom)
                         {
-                            <form asp-action="Delete" asp-controller="Programs" method="post" style="display:inline">
+                            <form asp-action="Delete" asp-controller="Programs"
+                                  method="post" class="delete-form" style="display:inline">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="id" value="@program.Id" />
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Confirma exclusão?')">
+                                <button type="button"
+                                        class="btn btn-danger btn-sm"
+                                        data-program-name="@program.Name"
+                                        onclick="openDeleteModal(this)">
                                     Excluir
                                 </button>
                             </form>
@@ -63,3 +66,56 @@
         </tbody>
     </table>
 </div>
+
+@* ── Modal de confirmação de exclusão ──────────────────────────────────────── *@
+<div class="modal-backdrop" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+        <div class="modal-icon">⚠</div>
+        <h2 class="modal-title" id="modalTitle">Confirmar Exclusão</h2>
+        <p class="modal-body">
+            Deseja excluir o programa<br>
+            <strong id="modalProgramName" class="modal-highlight"></strong>?<br>
+            <small>Esta ação não pode ser desfeita.</small>
+        </p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" id="modalConfirmBtn" onclick="confirmDelete()">
+                Excluir
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let _pendingForm = null;
+
+    function openDeleteModal(btn) {
+        _pendingForm = btn.closest('form');
+        document.getElementById('modalProgramName').textContent = btn.dataset.programName;
+        document.getElementById('deleteModal').classList.add('modal-open');
+        document.getElementById('modalConfirmBtn').focus();
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('modal-open');
+        _pendingForm = null;
+    }
+
+    function confirmDelete() {
+        _pendingForm?.submit();
+    }
+
+    // Fecha ao clicar fora do card
+    document.getElementById('deleteModal').addEventListener('click', function (e) {
+        if (e.target === this) closeDeleteModal();
+    });
+
+    // Fecha com Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeDeleteModal();
+    });
+</script>
+}

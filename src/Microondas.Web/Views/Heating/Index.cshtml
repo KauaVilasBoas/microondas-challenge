@@ -1,19 +1,12 @@
 @model HeatingViewModel
 @{
     ViewData["Title"] = "Micro-ondas Digital";
-    var status = ViewData["HeatingStatus"] as HeatingStatusViewModel;
-    var programs = ViewData["Programs"] as IReadOnlyList<ProgramReadModel> ?? [];
 
-    var statusStr = status?.Status ?? "Idle";
-    var statusClass = "status-" + statusStr.ToLower();
-
-    string StatusLabel(string s) => s switch {
-        "Running"   => "▶ AQUECENDO",
-        "Paused"    => "⏸ PAUSADO",
-        "Completed" => "✓ CONCLUÍDO",
-        "Cancelled" => "✕ CANCELADO",
-        _           => "◯ AGUARDANDO"
-    };
+    // Status is passed by the controller solely to drive the action-button labels.
+    // The LCD display is rendered by HeatingDisplayViewComponent (self-fetches via MediatR).
+    var status    = ViewData["HeatingStatus"] as HeatingStatusViewModel;
+    var isRunning = status?.IsRunning  == true;
+    var isPaused  = status?.IsPaused   == true;
 }
 
 <div class="microwave-container">
@@ -24,20 +17,11 @@
         <div class="alert alert-error">@Model.ErrorMessage</div>
     }
 
-    <!-- LCD Display Panel -->
-    <div class="display-panel @statusClass" id="displayPanel">
-        <div class="status-led">
-            <span class="led-dot"></span>
-            <span id="status-label">@StatusLabel(statusStr)</span>
-        </div>
-        <div id="time-display">@(status?.DisplayTime ?? "0")</div>
-        <div id="power-display">POTÊNCIA: @(status?.PowerLevel?.ToString() ?? "—")</div>
-        <div class="output-display" id="output-display">@(status?.CurrentOutput ?? "")</div>
-    </div>
+    @* LCD Display — renderizado pelo HeatingDisplayViewComponent (busca status via MediatR) *@
+    @await Component.InvokeAsync("HeatingDisplay")
 
-    <!-- Control Panel -->
+    @* Painel de controle: inputs de tempo/potência + botões de ação *@
     <div class="control-panel">
-        <!-- Input form (time + power) -->
         <form id="startForm" asp-action="Start" asp-controller="Heating" method="post">
             @Html.AntiForgeryToken()
             <div class="controls-grid">
@@ -48,7 +32,7 @@
                                min="1" max="120" placeholder="1–120"
                                value="@Model.TimeInSeconds" />
                     </div>
-                    <vc:digital-keyboard target-field-id="TimeInSeconds" />
+                    @await Component.InvokeAsync("DigitalKeyboard", new { targetFieldId = "TimeInSeconds" })
                 </div>
 
                 <div class="control-block">
@@ -58,60 +42,25 @@
                                min="1" max="10" placeholder="1–10"
                                value="@Model.PowerLevel" />
                     </div>
-                    <vc:digital-keyboard target-field-id="PowerLevel" />
+                    @await Component.InvokeAsync("DigitalKeyboard", new { targetFieldId = "PowerLevel" })
                 </div>
             </div>
         </form>
 
-        <!-- Action buttons (outside form, linked via form= attribute) -->
         <div class="action-bar">
             <button type="submit" form="startForm" class="btn btn-start">
-                @(status?.IsRunning == true ? "▶ +30s"
-                    : status?.IsPaused == true ? "▶ Retomar"
-                    : "▶ Iniciar")
+                @(isRunning ? "▶ +30s" : isPaused ? "▶ Retomar" : "▶ Iniciar")
             </button>
 
             <form asp-action="PauseOrCancel" asp-controller="Heating" method="post">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-secondary">
-                    @(status?.IsRunning == true ? "⏸ Pausar"
-                        : status?.IsPaused == true ? "✕ Cancelar"
-                        : "✕ Limpar")
+                    @(isRunning ? "⏸ Pausar" : isPaused ? "✕ Cancelar" : "✕ Limpar")
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Heating Programs -->
-    @if (programs.Count > 0)
-    {
-        <div class="programs-section">
-            <div class="section-header">
-                <h2>Programas de Aquecimento</h2>
-            </div>
-            <form asp-action="StartProgram" asp-controller="Heating" method="post">
-                @Html.AntiForgeryToken()
-                <div class="program-list">
-                    @foreach (var program in programs)
-                    {
-                        <label class="program-item @(program.IsCustom ? "program-custom" : "")">
-                            <input type="radio" name="SelectedProgramId" value="@program.Id" />
-                            <span class="program-name">@program.Name</span>
-                            <span class="program-food">@program.Food</span>
-                            <span class="program-details">
-                                @(program.TimeInSeconds / 60)min @(program.TimeInSeconds % 60)s
-                                · Pot @program.Power
-                                · '@program.HeatingChar'
-                            </span>
-                            @if (program.Instructions != null)
-                            {
-                                <small class="program-instructions">@program.Instructions</small>
-                            }
-                        </label>
-                    }
-                </div>
-                <button type="submit" class="btn btn-program">▶ Iniciar Programa</button>
-            </form>
-        </div>
-    }
+    @* Seletor de programas — renderizado pelo ProgramSelectorViewComponent (busca via MediatR) *@
+    @await Component.InvokeAsync("ProgramSelector")
 </div>

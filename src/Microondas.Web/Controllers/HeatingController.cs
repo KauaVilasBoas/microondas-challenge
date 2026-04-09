@@ -1,14 +1,15 @@
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microondas.Application.Commands.Heating.PauseOrCancelHeating;
 using Microondas.Application.Commands.Heating.StartHeating;
 using Microondas.Application.Commands.Heating.StartProgramHeating;
 using Microondas.Application.ReadModels.Heating;
-using Microondas.Application.ReadModels.Programs;
+using Microondas.Web.Filters;
 using Microondas.Web.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Microondas.Web.Controllers;
 
+[TypeFilter(typeof(RequireApiAuthFilter))]
 public sealed class HeatingController : Controller
 {
     private readonly IMediator _mediator;
@@ -18,11 +19,7 @@ public sealed class HeatingController : Controller
     public async Task<IActionResult> Index()
     {
         var status = await _mediator.Send(new GetHeatingStatusQuery());
-        var programs = await _mediator.Send(new GetAllProgramsQuery());
-
-        var statusVm = status is null ? null : MapToStatusViewModel(status);
-        ViewData["HeatingStatus"] = statusVm;
-        ViewData["Programs"] = programs;
+        ViewData["HeatingStatus"] = status is null ? null : MapToStatusViewModel(status);
 
         return View(new HeatingViewModel());
     }
@@ -31,8 +28,8 @@ public sealed class HeatingController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Start(HeatingViewModel model)
     {
-        var command = new StartHeatingCommand(model.TimeInSeconds, model.PowerLevel, model.HeatingChar);
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(
+            new StartHeatingCommand(model.TimeInSeconds, model.PowerLevel, model.HeatingChar));
 
         if (result.IsFailure)
         {
@@ -72,6 +69,9 @@ public sealed class HeatingController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    /// <summary>
+    /// JSON endpoint consumed by the SignalR fallback polling and status checks.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> Status()
     {
@@ -80,16 +80,16 @@ public sealed class HeatingController : Controller
         return Json(MapToStatusViewModel(status));
     }
 
-    private static HeatingStatusViewModel MapToStatusViewModel(HeatingStatusReadModel status) =>
+    private static HeatingStatusViewModel MapToStatusViewModel(HeatingStatusReadModel s) =>
         new()
         {
-            Status = status.Status,
-            RemainingSeconds = status.RemainingSeconds,
-            DisplayTime = status.DisplayTime,
-            ElapsedSeconds = status.ElapsedSeconds,
-            CurrentOutput = status.CurrentOutput,
-            PowerLevel = status.PowerLevel,
-            IsProgramSession = status.IsProgramSession,
-            ProgramId = status.ProgramId
+            Status = s.Status,
+            RemainingSeconds = s.RemainingSeconds,
+            DisplayTime = s.DisplayTime,
+            ElapsedSeconds = s.ElapsedSeconds,
+            CurrentOutput = s.CurrentOutput,
+            PowerLevel = s.PowerLevel,
+            IsProgramSession = s.IsProgramSession,
+            ProgramId = s.ProgramId
         };
 }

@@ -1,16 +1,23 @@
 @model HeatingStatusViewModel
+@{
+    var statusStr  = Model.Status ?? "Idle";
+    var statusClass = "status-" + statusStr.ToLower();
 
-<div class="heating-display-component" id="heatingDisplay">
-    <div class="status-indicator status-@Model.Status.ToLower()">
-        @Model.Status
+    string StatusLabel(string s) => s switch {
+        "Running"   => "▶ AQUECENDO",
+        "Paused"    => "⏸ PAUSADO",
+        "Completed" => "✓ CONCLUÍDO",
+        "Cancelled" => "✕ CANCELADO",
+        _           => "◯ AGUARDANDO"
+    };
+}
+
+<div class="display-panel @statusClass" id="displayPanel">
+    <div class="status-led">
+        <span class="led-dot"></span>
+        <span id="status-label">@StatusLabel(statusStr)</span>
     </div>
-    @if (Model.RemainingSeconds.HasValue)
-    {
-        <div class="time-remaining">Restante: @(Model.DisplayTime ?? Model.RemainingSeconds.ToString())</div>
-        <div class="power-level">Potência: @Model.PowerLevel</div>
-    }
-    @if (!string.IsNullOrEmpty(Model.CurrentOutput))
-    {
-        <div class="output-text">@Model.CurrentOutput</div>
-    }
+    <div id="time-display">@(Model.DisplayTime ?? (Model.RemainingSeconds?.ToString() ?? "0"))</div>
+    <div id="power-display">POTÊNCIA: @(Model.PowerLevel?.ToString() ?? "—")</div>
+    <div class="output-display" id="output-display">@(Model.CurrentOutput ?? "")</div>
 </div>

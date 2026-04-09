@@ -1,3 +1,5 @@
+@using Microondas.Web.Services
+@inject ITokenStore TokenStore
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -16,8 +18,28 @@
                 <span class="nav-brand-dot"></span>
                 Micro-ondas
             </span>
-            <a href="/Heating">Aquecimento</a>
-            <a href="/Programs">Programas</a>
+
+            @if (TokenStore.IsAuthenticated())
+            {
+                <a href="/Heating">Aquecimento</a>
+                <a href="/Programs">Programas</a>
+                <span class="nav-auth-status nav-auth-ok" title="Autenticado com a API">
+                    <span class="auth-led auth-led-ok"></span>
+                    API: OK
+                </span>
+                <form asp-action="Logout" asp-controller="Auth" method="post" class="nav-logout-form">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-logout">Sair</button>
+                </form>
+            }
+            else
+            {
+                <span class="nav-auth-status nav-auth-fail" title="Não autenticado">
+                    <span class="auth-led auth-led-fail"></span>
+                    API: Off
+                </span>
+                <a href="/Auth/Login" class="btn-login">Entrar</a>
+            }
         </nav>
     </header>
     <main>

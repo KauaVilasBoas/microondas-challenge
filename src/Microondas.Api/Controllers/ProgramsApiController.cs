@@ -1,9 +1,9 @@
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microondas.Application.Commands.Programs.CreateCustomProgram;
 using Microondas.Application.Commands.Programs.DeleteCustomProgram;
 using Microondas.Application.ReadModels.Programs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Microondas.Api.Controllers;
 
